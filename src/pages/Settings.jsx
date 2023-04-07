@@ -1,13 +1,14 @@
 import { useNavigate } from "react-router-dom";
 
-const Settings = () => {
+const Settings = ({token, setToken}) => {
 
   let navigate = useNavigate()
   const routeChange = (path) => {
     navigate(path)
   }
   const logout = () => {
-    return routeChange("/login")
+    setToken(null)
+    return routeChange("/")
   }
 
 

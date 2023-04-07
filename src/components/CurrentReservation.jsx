@@ -1,5 +1,5 @@
 
-const CurrentReservation = () => {
+const CurrentReservation = ({userId}) => {
 
   return (
     <div className="card w-4/5 md:w-3/5 bg-base-100 shadow-xl flex justify-center items-center -z-10">

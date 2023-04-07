@@ -4,7 +4,7 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import '../index.css'
 import { AiOutlineSearch } from "react-icons/ai"
 
-const Reserve = () => {
+const Reserve = ({token}) => {
 
   const [center, setCenter] = useState([41.759815029001956, -111.81735767016022])
   const [loading, setLoading] = useState(true)

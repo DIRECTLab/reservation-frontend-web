@@ -1,5 +1,5 @@
 
-const UpcomingReservations = () => {
+const UpcomingReservations = ({userId}) => {
 
   const upcomingReservations = [1,2] // Replace with actual data
 

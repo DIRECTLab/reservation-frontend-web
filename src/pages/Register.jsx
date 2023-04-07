@@ -2,18 +2,12 @@ import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 
-const Register = () => {
+const Register = ({setToken}) => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
-
-
-  let navigate = useNavigate()
-  const routeChange = (path) => {
-    navigate(path)
-  }
 
   const createUser = async () => {
     if (username === "") {
@@ -61,7 +55,10 @@ const Register = () => {
         return
       }
       else {
-        routeChange("/")
+        console.log(loginRes.data.token)
+        setToken(loginRes.data.token)
+        window.location.pathname = "/"
+        //routeChange("/")
       }
     }
 

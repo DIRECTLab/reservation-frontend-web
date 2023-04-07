@@ -1,15 +1,9 @@
 import { useState } from "react";
 import api from "../api";
-import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Login = ({setToken}) => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-
-  let navigate = useNavigate()
-  const routeChange = (path) => {
-    navigate(path)
-  }
 
   const login = async () => {
     if (username === "") {
@@ -30,7 +24,7 @@ const Login = () => {
       return
     }
     else {
-      routeChange("/")
+      setToken(res.data.token)
     }
     
   }
