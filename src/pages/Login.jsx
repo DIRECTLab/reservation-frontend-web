@@ -1,9 +1,15 @@
 import { useState } from "react";
+import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
+  let navigate = useNavigate()
+  const routeChange = (path) => {
+    navigate(path)
+  }
 
   const login = async () => {
     if (username === "") {
@@ -14,6 +20,19 @@ const Login = () => {
       alert("Please enter a password")
       return
     }
+
+    const res = await api.login({
+      'username': username,
+      'password': password,
+    })
+    if (res.error) {
+      alert(res.error)
+      return
+    }
+    else {
+      routeChange("/")
+    }
+    
   }
 
   return (

@@ -40,6 +40,7 @@ const api = {
     getUpcoming: r('get', `reservation?UserId=${userId}&upcoming=true`),
   }),
   createUser: r('post', `user`),
+  login: r('post', `user/login`),
   user: (userId) => ({
     getUser: r('get', `user?id=${userId}`),
   })

@@ -52,8 +52,19 @@ const Register = () => {
     }
     else {
       alert("Successfully Created User")
-      return routeChange("/")
+      const loginRes = await api.login({
+        'username': username,
+        'password': password,
+      })
+      if (loginRes.error) {
+        alert(loginRes.error)
+        return
+      }
+      else {
+        routeChange("/")
+      }
     }
+
   }
   
   return (
