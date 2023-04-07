@@ -1,4 +1,6 @@
 import { useState } from "react";
+import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [username, setUsername] = useState("")
@@ -6,6 +8,12 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
+
+
+  let navigate = useNavigate()
+  const routeChange = (path) => {
+    navigate(path)
+  }
 
   const createUser = async () => {
     if (username === "") {
@@ -31,6 +39,20 @@ const Register = () => {
     if (password !== confirmPassword) {
       alert("Passwords do not match")
       return
+    }
+    const res = await api.createUser({
+      'username': username,
+      'password': password,
+      'firstName': firstName,
+      'lastName': lastName
+    })
+    if (res.error) {
+      alert(res.error)
+      return
+    }
+    else {
+      alert("Successfully Created User")
+      return routeChange("/")
     }
   }
   
