@@ -4,6 +4,7 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import '../index.css'
 import { AiOutlineSearch } from "react-icons/ai"
 import Datepicker from "react-tailwindcss-datepicker";
+import api from '../api';
 
 const Reserve = ({ token }) => {
 
@@ -16,7 +17,6 @@ const Reserve = ({ token }) => {
 
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
   const [selectableHours, setSelectableHours] = useState([]);
-
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1)
 
@@ -37,6 +37,16 @@ const Reserve = ({ token }) => {
     }
   }
 
+  const reserveTime = async () => {
+    
+    let dateTime = new Date();
+    
+
+    await api.reservation(token.id).reserve({
+      'datetime': dateTime,
+      'charger': charger,
+    })
+  }
 
   useEffect(() => {
     let date = `${new Date().toLocaleDateString('en-CA')}`
