@@ -28,9 +28,9 @@ const Reserve = ({ token }) => {
   const formatHour = (time) => {
     if (time > 12) {
       return `${time - 12} PM`
-    } else if (time == 12) {
+    } else if (time === 12) {
       return `${time} PM`
-    } else if (time == 0) {
+    } else if (time === 0) {
       return `${time + 12} AM`
     } else {
       return `${time} AM`
@@ -39,20 +39,22 @@ const Reserve = ({ token }) => {
 
   const reserveTime = async () => {
     
-    let dateTime = new Date();
-    
+    let day = new Date(selectedDate.startDate)
+    day.setDate(day.getDate() + 1)
+    day.setHours(selectedHour, 0, 0, 0, 0);
+       
 
     await api.reservation(token.id).reserve({
-      'datetime': dateTime,
+      'datetime': day,
       'charger': charger,
-    })
+    });
   }
 
   useEffect(() => {
     let date = `${new Date().toLocaleDateString('en-CA')}`
     let availableHours = [];
 
-    if (selectedDate.startDate == date) {
+    if (selectedDate.startDate === date) {
       for (let i = currentHour + 1; i < 24; i++) {
         availableHours.push(i);
       }
@@ -128,7 +130,7 @@ const Reserve = ({ token }) => {
 
 
           <div className="modal-action">
-            <label htmlFor="my-modal-6" className="btn" onClick={() => {console.log("Reserving!")}}>Reserve</label>
+            <label htmlFor="my-modal-6" className="btn" onClick={() => {reserveTime()}}>Reserve</label>
           </div>
         </div>
 
