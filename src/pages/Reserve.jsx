@@ -3,12 +3,58 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import '../index.css'
 import { AiOutlineSearch } from "react-icons/ai"
+import Datepicker from "react-tailwindcss-datepicker";
 
 const Reserve = ({ token }) => {
 
   const [center, setCenter] = useState([41.759815029001956, -111.81735767016022])
   const [loading, setLoading] = useState(true)
   const [charger, setCharger] = useState("")
+  const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: null });
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedHour, setSelectedHour] = useState(new Date().getHours());
+
+  const [currentHour, setCurrentHour] = useState(new Date().getHours());
+  const [selectableHours, setSelectableHours] = useState([]);
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1)
+
+
+  const handleValueChange = (newDate) => {
+    setSelectedDate(newDate);
+  }
+
+  const formatHour = (time) => {
+    if (time > 12) {
+      return `${time - 12} PM`
+    } else if (time == 12) {
+      return `${time} PM`
+    } else if (time == 0) {
+      return `${time + 12} AM`
+    } else {
+      return `${time} AM`
+    }
+  }
+
+
+  useEffect(() => {
+    let date = `${new Date().toLocaleDateString('en-CA')}`
+    let availableHours = [];
+
+    if (selectedDate.startDate == date) {
+      for (let i = currentHour + 1; i < 24; i++) {
+        availableHours.push(i);
+      }
+    } else {
+      for (let i = 0; i < 24; i++) {
+        availableHours.push(i);
+      }
+    }
+
+    setSelectableHours(availableHours);
+
+  }, [selectedDate])
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -36,18 +82,48 @@ const Reserve = ({ token }) => {
           />
         </div>
       </div>
-      <label htmlFor="my-modal-6" className="btn">open modal</label>
+
+      <label htmlFor="my-modal-6" className="btn">Reserve Selected Charger</label>
+
 
       <input type="checkbox" id="my-modal-6" className="modal-toggle" />
-      <div className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Congratulations random Internet user!</h3>
-          <p className="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
+      <div className="modal modal-bottom sm:modal-middle ">
+        <div className="modal-box w-11/12 h-4/5">
+          <label htmlFor="my-modal-6" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+
+          <h3 className="font-bold text-lg">Reservation</h3>
+          <p className="py-4">You selected: <strong>{charger}</strong></p>
+          <h4>Choose a date for your reservation:</h4>
+          <Datepicker
+            primaryColor='blue'
+            minDate={yesterday}
+            useRange={false}
+            asSingle={true}
+            value={selectedDate}
+            onChange={setSelectedDate}
+          />
+          =
+          
+          <div className={`overflow-x-auto w-full flex flex-col items-center h-96 ${!isVisible ? "visible" : "hidden"}`}>
+            <button className="btn btn-primary text-secondary w-3/4" onClick={() => {setIsVisible(true)}}>
+              Reservation Time: {formatHour(selectedHour)}
+            </button>
+          </div>
+
+          <div className={`overflow-x-auto w-full flex flex-col items-center h-96 ${isVisible ? "visible" : "hidden"}`}>
+            {selectableHours.map(time => (
+              <button className="btn btn-primary text-secondary w-3/4 mt-4" key={time} onClick={() => {setSelectedHour(time); setIsVisible(false)}}>{formatHour(time)}</button>
+            ))}
+          </div>
+
+
           <div className="modal-action">
-            <label htmlFor="my-modal-6" className="btn">Yay!</label>
+            <label htmlFor="my-modal-6" className="btn" onClick={() => {console.log("Reserving!")}}>Reserve</label>
           </div>
         </div>
+
       </div>
+
     </div>
   )
 }
