@@ -4,7 +4,7 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import '../index.css'
 import { AiOutlineSearch } from "react-icons/ai"
 
-const Reserve = ({token}) => {
+const Reserve = ({ token }) => {
 
   const [center, setCenter] = useState([41.759815029001956, -111.81735767016022])
   const [loading, setLoading] = useState(true)
@@ -26,14 +26,26 @@ const Reserve = ({token}) => {
       <h2 className='text-md mt-12'>Search for it manually</h2>
       <div className='relative w-4/5 flex justify-center'>
         <div>
-          <AiOutlineSearch className='absolute mt-6 ml-2 text-gray-500'/>
-          <input 
-            type="text" 
-            placeholder="Charger Name" 
-            className="input input-bordered w-full max-w-xs mt-2 placeholder: pl-8 placeholder: text-gray-500" 
+          <AiOutlineSearch className='absolute mt-6 ml-2 text-gray-500' />
+          <input
+            type="text"
+            placeholder="Charger Name"
+            className="input input-bordered w-full max-w-xs mt-2 placeholder: pl-8 placeholder: text-gray-500"
             value={charger}
             onChange={(event) => setCharger(event.target.value)}
           />
+        </div>
+      </div>
+      <label htmlFor="my-modal-6" className="btn">open modal</label>
+
+      <input type="checkbox" id="my-modal-6" className="modal-toggle" />
+      <div className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Congratulations random Internet user!</h3>
+          <p className="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
+          <div className="modal-action">
+            <label htmlFor="my-modal-6" className="btn">Yay!</label>
+          </div>
         </div>
       </div>
     </div>
