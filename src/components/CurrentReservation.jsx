@@ -3,16 +3,23 @@ import api from "../api";
 
 const CurrentReservation = ({userId}) => {
   const [currentReservation, setCurrentReservation] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   const getUpcoming = async () => {
-    return await api.reservation(userId).getCurrent();
+    const res =  await api.reservation(userId).getCurrent();
+    if (res.error) {
+      alert(res.error)
+      return
+    }
+    setLoading(false)
+    setCurrentReservation(res)
   }
 
 
   useEffect(() => {
-    let upcoming = getUpcoming();
-    console.log(upcoming);
-    setCurrentReservation(upcoming);
+    setLoading(true)
+    getUpcoming()
+    
   }, [])
 
   useEffect(() => {
