@@ -37,6 +37,7 @@ const api = {
   }),
   reservation: (userId) => ({
     getAll: r('get', `reservation?UserId=${userId}&all=true`),
+    getCurrent: r('get', `reservation/current?UserId=${userId}&startDate=${new Date().toDateString()}`),
     getUpcoming: r('get', `reservation?UserId=${userId}&upcoming=true`),
   }),
   createUser: r('post', `user`),
