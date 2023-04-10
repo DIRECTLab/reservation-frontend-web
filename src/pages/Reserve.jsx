@@ -1,14 +1,30 @@
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import '../index.css'
 import { AiOutlineSearch } from "react-icons/ai"
+import L from 'leaflet'
 
 const Reserve = ({token}) => {
 
   const [center, setCenter] = useState([41.759815029001956, -111.81735767016022])
   const [loading, setLoading] = useState(true)
   const [charger, setCharger] = useState("")
+  const [chargerInformation, setChargerInformation] = useState([])
+
+  const chargerIcon = L.icon({
+    iconUrl: 'chargerIcon.png',
+    iconSize: [30, 30]
+  })
+
+  const getChargers = async () => {
+
+  }
+
+  useEffect(() => {
+    setLoading(true)
+    getChargers()
+  }, [])
 
   return (
     <div className="flex flex-col items-center justify-center">
