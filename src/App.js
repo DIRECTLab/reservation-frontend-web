@@ -14,8 +14,8 @@ import ErrorPage from './pages/ErrorPage';
 
 function App() {
 
-  const { token, setToken } = useToken();
   const [menuOpen, setMenuOpen] = useState(false)
+  const { token, setToken, tokenEncoded } = useToken();
   if (!token && window.location.pathname === "/register") {
     return <Register setToken={setToken} />
   }
@@ -31,8 +31,8 @@ function App() {
     <BrowserRouter>
       <NavigationBar setMenuOpen={setMenuOpen}/>
       <Routes>
-        <Route exact path='/' element={<Home token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen} />} />
-        <Route exact path='/reserve' element={<Reserve token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>} />
+        <Route exact path='/' element={<Home token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>} />
+        <Route exact path='/reserve' element={<Reserve token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen} encodedToken={tokenEncoded} />} />
         <Route exact path='/settings' element={<Settings token={token} setToken={setToken} menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>} />
         <Route path='*' element={<ErrorPage/>} />
       </Routes>

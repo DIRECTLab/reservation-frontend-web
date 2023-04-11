@@ -22,9 +22,6 @@ const CurrentReservation = ({userId}) => {
     
   }, [])
 
-  useEffect(() => {
-    console.log("Upcoming!" + currentReservation);
-  }, [currentReservation])
 
 
   return (

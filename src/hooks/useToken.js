@@ -10,7 +10,7 @@ function decodeJwt(token) {
 
 const useToken = () => {
   const getToken = () => {
-    const tokenString = localStorage.getItem('token')
+    const tokenString = localStorage.getItem('token');
     const userToken = JSON.parse(tokenString)
     if (userToken) {
       const decodedToken = decodeJwt(userToken)
@@ -29,7 +29,15 @@ const useToken = () => {
     }
 
   }
-  const [token, setToken] = useState(getToken())
+
+  const getEncodedToken = () => {
+    const tokenString = localStorage.getItem('token');
+    return tokenString;
+  }
+
+  const [token, setToken] = useState(getToken());
+  const [tokenEncoded, setTokenEncoded] = useState(getEncodedToken());
+
 
   const saveToken = userToken => {
     console.log(userToken)
@@ -39,7 +47,8 @@ const useToken = () => {
   
   return {
     setToken: saveToken,
-    token
+    token,
+    tokenEncoded,
   }
 }
 export default useToken
