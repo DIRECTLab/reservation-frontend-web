@@ -37,6 +37,8 @@ const Reserve = ({ token, encodedToken }) => {
     }
   }
 
+
+  // TODO: Change back to 'ChargerId': charger
   const reserveTime = async () => {
     
     let day = new Date(selectedDate.startDate)
@@ -45,7 +47,8 @@ const Reserve = ({ token, encodedToken }) => {
     
     await api.reservation(token.id).reserve({
       'datetime': day,
-      'charger': charger,
+      'ChargerId': 1,
+      // 'charger': charger,
       'UserId': token.id,
     }, encodedToken);
   }

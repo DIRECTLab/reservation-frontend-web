@@ -9,7 +9,7 @@ const Home = ({token}) => {
         <h2 className="text-xl mt-4 font-semibold">Current Reservation</h2>
         <CurrentReservation userId={token.id}/>
         <div className="divider"/>
-        <h2 className="text-xl mt-4">Upcoming Reservations</h2>
+        <h2 className="text-xl mt-4 font-semibold">Upcoming Reservations</h2>
         <UpcomingReservations userId={token.id}/>
       </div>
     </>

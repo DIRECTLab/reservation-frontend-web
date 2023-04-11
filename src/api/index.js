@@ -15,10 +15,7 @@ const requestGenerator = (getBase) => (method, uri) => (data = {}, authorization
   switch (method) {
     case methods.get:
     case methods.post:
-      requestPromise = axios[method](`${getBase()}/${uri}`, {params: data}, 
-      {headers: 
-        {authorization}, 
-        });
+      requestPromise = axios[method](`${getBase()}/${uri}`, {...data}, {headers: {authorization}});
       break;
     case methods.delete:
       requestPromise = axios[method](`${getBase()}/${uri}`, {
