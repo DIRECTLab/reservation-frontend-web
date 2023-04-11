@@ -6,7 +6,7 @@ import { AiOutlineSearch } from "react-icons/ai"
 import Datepicker from "react-tailwindcss-datepicker";
 import api from '../api';
 
-const Reserve = ({ token }) => {
+const Reserve = ({ token, encodedToken }) => {
 
   const [center, setCenter] = useState([41.759815029001956, -111.81735767016022])
   const [loading, setLoading] = useState(true)
@@ -42,12 +42,12 @@ const Reserve = ({ token }) => {
     let day = new Date(selectedDate.startDate)
     day.setDate(day.getDate() + 1)
     day.setHours(selectedHour, 0, 0, 0, 0);
-       
-
+    
     await api.reservation(token.id).reserve({
       'datetime': day,
       'charger': charger,
-    });
+      'UserId': token.id,
+    }, encodedToken);
   }
 
   useEffect(() => {

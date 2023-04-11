@@ -14,7 +14,7 @@ import ErrorPage from './pages/ErrorPage';
 
 function App() {
 
-  const { token, setToken } = useToken();
+  const { token, setToken, tokenEncoded } = useToken();
   if (!token && window.location.pathname === "/register") {
     return <Register setToken={setToken} />
   }
@@ -30,7 +30,7 @@ function App() {
       <NavigationBar />
       <Routes>
         <Route exact path='/' element={<Home token={token} />} />
-        <Route exact path='/reserve' element={<Reserve token={token}/>} />
+        <Route exact path='/reserve' element={<Reserve token={token} encodedToken={tokenEncoded}/>} />
         <Route exact path='/settings' element={<Settings token={token} setToken={setToken}/>} />
         <Route path='*' element={<ErrorPage/>} />
       </Routes>

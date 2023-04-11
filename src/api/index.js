@@ -7,12 +7,18 @@ const methods = {
   delete: 'delete'
 }
 
-const requestGenerator = (getBase) => (method, uri) => (data = {}) => {
+const requestGenerator = (getBase) => (method, uri) => (data = {}, authorization = null) => {
+  if (authorization){
+    console.log(authorization);
+  }
   let requestPromise;
   switch (method) {
     case methods.get:
     case methods.post:
-      requestPromise = axios[method](`${getBase()}/${uri}`, {...data});
+      requestPromise = axios[method](`${getBase()}/${uri}`, {params: data}, 
+      {headers: 
+        {authorization}, 
+        });
       break;
     case methods.delete:
       requestPromise = axios[method](`${getBase()}/${uri}`, {
@@ -39,7 +45,7 @@ const api = {
     getAll: r('get', `reservation?UserId=${userId}&all=true`),
     getCurrent: r('get', `reservation/current?UserId=${userId}&startDate=${new Date().toDateString()}`),
     getUpcoming: r('get', `reservation?UserId=${userId}&upcoming=true`),
-    reserve: r('post', `reservation?UserId=${userId}`)
+    reserve: r('post', `reservation`)
   }),
   createUser: r('post', `user`),
   login: r('post', `user/login`),
