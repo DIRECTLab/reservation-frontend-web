@@ -32,6 +32,7 @@ const getApiBase = () => 'http://localhost:11236'
 const r = requestGenerator(getApiBase);
 
 const api = {
+  getChargers: r('get', 'charger'),
   charger: (chargerId) => ({
     get: r('get', `charger/${chargerId}`)
   }),
