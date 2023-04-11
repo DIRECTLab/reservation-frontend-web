@@ -7,13 +7,14 @@ import Register from './pages/Register'
 import Reserve from './pages/Reserve'
 import Settings from './pages/Settings'
 import NavigationBar from './components/NavigationBar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useToken from './hooks/useToken';
 import ErrorPage from './pages/ErrorPage';
 
 
 function App() {
 
+  const [menuOpen, setMenuOpen] = useState(false)
   const { token, setToken, tokenEncoded } = useToken();
   if (!token && window.location.pathname === "/register") {
     return <Register setToken={setToken} />
@@ -25,13 +26,14 @@ function App() {
     return <Login setToken={setToken} />
   }
 
+
   return (
     <BrowserRouter>
-      <NavigationBar />
+      <NavigationBar setMenuOpen={setMenuOpen}/>
       <Routes>
-        <Route exact path='/' element={<Home token={token} />} />
-        <Route exact path='/reserve' element={<Reserve token={token} encodedToken={tokenEncoded}/>} />
-        <Route exact path='/settings' element={<Settings token={token} setToken={setToken}/>} />
+        <Route exact path='/' element={<Home token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>} />
+        <Route exact path='/reserve' element={<Reserve token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen} encodedToken={tokenEncoded} />} />
+        <Route exact path='/settings' element={<Settings token={token} setToken={setToken} menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>} />
         <Route path='*' element={<ErrorPage/>} />
       </Routes>
     </BrowserRouter>

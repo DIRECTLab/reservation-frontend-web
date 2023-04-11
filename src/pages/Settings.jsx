@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const Settings = ({token, setToken}) => {
+const Settings = ({token, setToken, menuOpen, setMenuOpen}) => {
 
   let navigate = useNavigate()
   const routeChange = (path) => {
@@ -11,9 +11,14 @@ const Settings = ({token, setToken}) => {
     return routeChange("/")
   }
 
+  const closeMenu = () => {
+    if (menuOpen) {
+      setMenuOpen(false)
+    }
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center" onClick={closeMenu}>
       <h2 className="text-2xl font-bold mt-4">Settings</h2>
       <div className="fixed bottom-8 w-3/4 md:w-2/5 lg:w-1/5">
         <button 
