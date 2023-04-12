@@ -31,7 +31,7 @@ function App() {
     <BrowserRouter>
       <NavigationBar setMenuOpen={setMenuOpen}/>
       <Routes>
-        <Route exact path='/' element={<Home token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>} />
+        <Route exact path='/' element={<Home token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen} encodedToken={tokenEncoded}/>} />
         <Route exact path='/reserve' element={<Reserve token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen} encodedToken={tokenEncoded} />} />
         <Route exact path='/settings' element={<Settings token={token} setToken={setToken} menuOpen={menuOpen} setMenuOpen={setMenuOpen}/>} />
         <Route path='*' element={<ErrorPage/>} />
