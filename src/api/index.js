@@ -8,9 +8,6 @@ const methods = {
 }
 
 const requestGenerator = (getBase) => (method, uri) => (data = {}, authorization = null) => {
-  if (authorization){
-    console.log(authorization);
-  }
   let requestPromise;
   switch (method) {
     case methods.get:

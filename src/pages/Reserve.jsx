@@ -6,6 +6,7 @@ import { AiOutlineSearch } from "react-icons/ai"
 import L from 'leaflet'
 import api from '../api';
 import Datepicker from "react-tailwindcss-datepicker";
+import Alert from '../components/Alert';
 
 const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
   const [center, setCenter] = useState([41.759815029001956, -111.81735767016022])
@@ -15,6 +16,9 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
   const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: null });
   const [isVisible, setIsVisible] = useState(false);
   const [selectedHour, setSelectedHour] = useState(new Date().getHours());
+
+  const [error, setError] = useState(false)
+  const [alert, setAlert] = useState(false)
 
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
   const [selectableHours, setSelectableHours] = useState([]);
@@ -27,7 +31,10 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
   const getChargers = async () => {
     const chargersRes = await api.getChargers()
 		if (chargersRes.error) {
-			return alert(chargersRes.error)
+			// return alert(chargersRes.error)
+      setError(true)
+      setAlert(true)
+      return
 		}
 		let chargerInformation = chargersRes.data.rows.map(data => {
 			if (data.name !== null && data.latitude !== null && data.longitude !== null) {
@@ -86,13 +93,29 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
     day.setDate(day.getDate() + 1)
     day.setHours(selectedHour, 0, 0, 0, 0);
     
-    await api.reservation(token.id).reserve({
+    const res = await api.reservation(token.id).reserve({
       'datetime': day,
       'ChargerId': 1,
       // 'charger': charger,
       'UserId': token.id,
     }, encodedToken);
+		if (res.error) {
+      setError(true)
+      setAlert(true)
+      return
+		}
+    else {
+      setError(false)
+      setAlert(true)
+    }
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setAlert(false)
+      setError(false)
+    }, 5000)
+  }, [alert])
 
   useEffect(() => {
     let date = `${new Date().toLocaleDateString('en-CA')}`
@@ -114,6 +137,9 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
 
   return (
     <div className="flex flex-col items-center justify-center" onClick={closeMenu}>
+      {alert &&
+        <Alert error={error} />
+      }
       <h1 className="text-2xl font-bold mt-4">Reserve</h1>
       <h2 className='text-md mt-4'>Select the charger you want to reserve</h2>
       <div id="map-container" className={`flex content-center items-center w-4/5 mt-4 ${menuOpen ? '-z-10' : 'z-10'}`} >

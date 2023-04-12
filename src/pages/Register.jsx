@@ -55,7 +55,6 @@ const Register = ({setToken}) => {
         return
       }
       else {
-        console.log(loginRes.data.token)
         setToken(loginRes.data.token)
         window.location.pathname = "/"
         //routeChange("/")
