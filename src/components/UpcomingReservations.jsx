@@ -27,7 +27,7 @@ const UpcomingReservations = ({ userId, encodedToken }) => {
     console.log(encodedToken)
     const res = await api.reservation(id).delete({}, encodedToken);
 
-    if (res.errro) {
+    if (res.error) {
       alert(res.error);
       return;
     }
