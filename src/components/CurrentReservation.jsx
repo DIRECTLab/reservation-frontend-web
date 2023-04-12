@@ -34,6 +34,11 @@ const CurrentReservation = ({userId}) => {
   })
 
 
+  if (!currentReservation) {
+    return (
+      <div>No Current Reservation</div>
+    )
+  }
   return (
     <div className="card w-4/5 md:w-3/5 bg-base-100 shadow-xl flex justify-center items-center -z-10">
       <div className="card-body">

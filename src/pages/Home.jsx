@@ -1,7 +1,7 @@
 import CurrentReservation from "../components/CurrentReservation";
 import UpcomingReservations from "../components/UpcomingReservations";
 
-const Home = ({token, menuOpen, setMenuOpen}) => {
+const Home = ({token, menuOpen, setMenuOpen, encodedToken}) => {
 
   const closeMenu = () => {
     if (menuOpen) {
@@ -13,10 +13,10 @@ const Home = ({token, menuOpen, setMenuOpen}) => {
       <div className="flex flex-col items-center justify-center" onClick={closeMenu}>
         <h1 className="text-2xl mt-4 font-bold">Welcome {token.firstName}</h1>
         <h2 className="text-xl mt-4 font-semibold">Current Reservation</h2>
-        <CurrentReservation userId={token.id}/>
+        <CurrentReservation userId={token.id} encodedToken={encodedToken}/>
         <div className="divider"/>
         <h2 className="text-xl mt-4 font-semibold">Upcoming Reservations</h2>
-        <UpcomingReservations userId={token.id}/>
+        <UpcomingReservations userId={token.id} encodedToken={encodedToken}/>
       </div>
     </>
   )

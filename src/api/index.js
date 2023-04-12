@@ -18,9 +18,7 @@ const requestGenerator = (getBase) => (method, uri) => (data = {}, authorization
       requestPromise = axios[method](`${getBase()}/${uri}`, {...data}, {headers: {authorization}});
       break;
     case methods.delete:
-      requestPromise = axios[method](`${getBase()}/${uri}`, {
-        params: data,
-      });
+      requestPromise = axios[method](`${getBase()}/${uri}`, {headers: {authorization}});
       break;
     default:
       requestPromise = axios[method](`${getBase()}/${uri}`)
@@ -43,7 +41,8 @@ const api = {
     getAll: r('get', `reservation?UserId=${userId}&all=true`),
     getCurrent: r('get', `reservation/current?UserId=${userId}&startDate=${new Date().toDateString()}`),
     getUpcoming: r('get', `reservation?UserId=${userId}&upcoming=true`),
-    reserve: r('post', `reservation`)
+    reserve: r('post', `reservation`),
+    delete: r('delete', `reservation?id=${userId}`)
   }),
   createUser: r('post', `user`),
   login: r('post', `user/login`),

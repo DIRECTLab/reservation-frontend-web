@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 
-const UpcomingReservations = ({ userId }) => {
+const UpcomingReservations = ({ userId, encodedToken }) => {
   const [upcomingReservations, setUpcomingReservations] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  
   const getUpcomingReservations = async () => {
     const res = await api.reservation(userId).getUpcoming();
 
@@ -22,6 +22,19 @@ const UpcomingReservations = ({ userId }) => {
     getUpcomingReservations()
   }, [])
 
+
+  const deleteReservation = async (id) => {
+    console.log(encodedToken)
+    const res = await api.reservation(id).delete({}, encodedToken);
+
+    if (res.errro) {
+      alert(res.error);
+      return;
+    }
+
+    setLoading(true);
+    getUpcomingReservations();
+  }
 
 
   const formatTime = (date) => {
@@ -49,7 +62,7 @@ const UpcomingReservations = ({ userId }) => {
                 <h2 className="text-lg self-center">{formatDate(reservation.datetime)}</h2>
                 <h2 className="text-lg self-center">{formatTime(reservation.datetime)}</h2>
                 <div className="card-actions justify-center mt-8">
-                  <button className="btn btn-error text-secondary">Cancel Reservation</button>
+                  <button className="btn btn-error text-secondary" onClick={() => deleteReservation(reservation.id)}>Cancel Reservation</button>
                 </div>
               </div>
             </div>
