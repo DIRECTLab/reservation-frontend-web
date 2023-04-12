@@ -7,11 +7,17 @@ import L from 'leaflet'
 import api from '../api';
 import Datepicker from "react-tailwindcss-datepicker";
 
-const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => 
+const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
   const [center, setCenter] = useState([41.759815029001956, -111.81735767016022])
   const [loading, setLoading] = useState(true)
   const [charger, setCharger] = useState("")
   const [chargerInformation, setChargerInformation] = useState([])
+  const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: null });
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedHour, setSelectedHour] = useState(new Date().getHours());
+
+  const [currentHour, setCurrentHour] = useState(new Date().getHours());
+  const [selectableHours, setSelectableHours] = useState([]);
 
   const chargerIcon = L.icon({
     iconUrl: 'chargerIcon.png',
@@ -42,13 +48,10 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) =>
   const closeMenu = () => {
     if (menuOpen) {
       setMenuOpen(false)
+    }
+  }
       
-  const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: null });
-  const [isVisible, setIsVisible] = useState(false);
-  const [selectedHour, setSelectedHour] = useState(new Date().getHours());
 
-  const [currentHour, setCurrentHour] = useState(new Date().getHours());
-  const [selectableHours, setSelectableHours] = useState([]);
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1)
 
@@ -121,16 +124,24 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) =>
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           { chargerInformation.map((charger, idx) => (
-          <Marker position={[charger.latitude, charger.longitude]} icon={chargerIcon} key={idx}>
-            <Popup>
-              Charger name: {charger.name}<br>
-            </Popup>
+          <Marker 
+            position={[charger.latitude, charger.longitude]}
+            icon={chargerIcon}
+            key={idx}
+            eventHandlers={{
+              click: (e) => {
+                setCharger(charger.name)
+                document.getElementById('my-modal-6').checked = true;
+
+              }
+            }}
+          >
           </Marker>
         )
         )}
         </MapContainer>
       </div>
-      <h2 className='text-md mt-12'>Search for it manually</h2>
+      <h2 className='text-md mt-4'>Search for it manually</h2>
       <div className='relative w-4/5 flex justify-center'>
         <div>
           <AiOutlineSearch className='absolute mt-6 ml-2 text-gray-500' />
@@ -144,34 +155,36 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) =>
         </div>
       </div>
 
-      <label htmlFor="my-modal-6" className="btn">Reserve Selected Charger</label>
+      <label htmlFor="my-modal-6" className="btn mt-4">Reserve Selected Charger</label>
 
 
       <input type="checkbox" id="my-modal-6" className="modal-toggle" />
-      <div className="modal modal-bottom sm:modal-middle ">
+      <div className="modal modal-bottom md:modal-middle ">
         <div className="modal-box w-11/12 h-4/5">
           <label htmlFor="my-modal-6" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 
           <h3 className="font-bold text-lg">Reservation</h3>
           <p className="py-4">You selected: <strong>{charger}</strong></p>
           <h4>Choose a date for your reservation:</h4>
-          <Datepicker
-            primaryColor='blue'
-            minDate={yesterday}
-            useRange={false}
-            asSingle={true}
-            value={selectedDate}
-            onChange={setSelectedDate}
-          />
+          <div className='mt-4'>
+            <Datepicker
+              primaryColor='blue'
+              minDate={yesterday}
+              useRange={false}
+              asSingle={true}
+              value={selectedDate}
+              onChange={setSelectedDate}
+            />
+          </div>
           
           
-          <div className={`overflow-x-auto w-full flex flex-col items-center h-96 ${!isVisible ? "visible" : "hidden"}`}>
+          <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 mt-4 ${!isVisible ? "visible" : "hidden"}`}>
             <button className="btn btn-primary text-secondary w-3/4" onClick={() => {setIsVisible(true)}}>
               Reservation Time: {formatHour(selectedHour)}
             </button>
           </div>
 
-          <div className={`overflow-x-auto w-full flex flex-col items-center h-96 ${isVisible ? "visible" : "hidden"}`}>
+          <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 ${isVisible ? "visible" : "hidden"}`}>
             {selectableHours.map(time => (
               <button className="btn btn-primary text-secondary w-3/4 mt-4" key={time} onClick={() => {setSelectedHour(time); setIsVisible(false)}}>{formatHour(time)}</button>
             ))}

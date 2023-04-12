@@ -31,7 +31,7 @@ const UpcomingReservations = ({ userId }) => {
   }
 
   const formatDate = ((date) => {
-    return `${new Date().toLocaleDateString('en-us')}`
+    return `${new Date(date).toLocaleDateString('en-us')}`
   })
 
   // const upcomingReservations = [1,2] // Replace with actual data
