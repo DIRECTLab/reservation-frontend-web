@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 
-const CurrentReservation = ({userId, menuOpen}) => {
+const CurrentReservation = ({userId, menuOpen, setError, setAlert}) => {
   const [currentReservation, setCurrentReservation] = useState(null)
   const [loading, setLoading] = useState(true)
 
   const getCurrent = async () => {
     const res =  await api.reservation(userId).getCurrent();
     if (res.error) {
-      alert(res.error)
+      setError(true)
+      setAlert(true)
       return
     }
     setLoading(false)

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 
-const UpcomingReservations = ({ userId, encodedToken }) => {
+const UpcomingReservations = ({ userId, encodedToken, setAlert, setError }) => {
   const [upcomingReservations, setUpcomingReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -9,7 +9,8 @@ const UpcomingReservations = ({ userId, encodedToken }) => {
     const res = await api.reservation(userId).getUpcoming();
 
     if (res.error) {
-      alert(res.error);
+      setError(true)
+      setAlert(true)
       return;
     }
 
@@ -28,7 +29,8 @@ const UpcomingReservations = ({ userId, encodedToken }) => {
     const res = await api.reservation(id).delete({}, encodedToken);
 
     if (res.error) {
-      alert(res.error);
+      setError(true)
+      setAlert(true)
       return;
     }
 

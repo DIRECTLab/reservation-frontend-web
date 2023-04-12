@@ -31,7 +31,6 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
   const getChargers = async () => {
     const chargersRes = await api.getChargers()
 		if (chargersRes.error) {
-			// return alert(chargersRes.error)
       setError(true)
       setAlert(true)
       return
@@ -110,13 +109,7 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
     }
   }
 
-  useEffect(() => {
-    setTimeout(() => {
-      setAlert(false)
-      setError(false)
-    }, 5000)
-  }, [alert])
-
+  
   useEffect(() => {
     let date = `${new Date().toLocaleDateString('en-CA')}`
     let availableHours = [];
@@ -130,10 +123,17 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
         availableHours.push(i);
       }
     }
-
+    
     setSelectableHours(availableHours);
-
+    
   }, [selectedDate])
+  
+  useEffect(() => {
+    setTimeout(() => {
+      setAlert(false)
+      setError(false)
+    }, 5000)
+  }, [alert])
 
   return (
     <div className="flex flex-col items-center justify-center" onClick={closeMenu}>
