@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../api";
+import { useNavigate } from "react-router-dom";
 
-const CurrentReservation = ({userId}) => {
+const CurrentReservation = ({userId, menuOpen}) => {
   const [currentReservation, setCurrentReservation] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -33,22 +34,25 @@ const CurrentReservation = ({userId}) => {
   })
 
 
+  let navigate = useNavigate()
+  const routeChange = (path) => {
+    navigate(path)
+  }
+
+
   if (!currentReservation) {
     return (
-      <div>No Current Reservation</div>
-    )
-  }
-  return (
-    <div className="card w-4/5 md:w-3/5 bg-base-100 shadow-xl flex justify-center items-center -z-10">
-      <div className="card-body">
-        <h2 className="card-title justify-center">{currentReservation.Charger.name}</h2>
-        {/* <h2 className="text-lg self-center">Car Model: Tesla</h2> */}
-        <h2 className="text-lg self-center">{formatDate(currentReservation.datetime)}</h2>
-        <h2 className="text-lg self-center">{formatTime(currentReservation.datetime)}</h2>
-
-        <div className="card-actions justify-center mt-8">
-          <button className="btn btn-error text-secondary">Cancel Reservation</button>
-
+      <div className={`card w-4/5 md:w-3/5 bg-base-100 shadow-xl flex justify-center items-center ${menuOpen ? '-z-10' : ''}`}>
+        <div className="card-body">
+          <h2 className="card-title justify-center">No Current Reservation</h2>
+          <div className="card-actions justify-center mt-8">
+            <button 
+              className="btn btn-primary text-secondary"
+              onClick={() => {routeChange("/reserve"); }}
+            >
+              Make a Reservation
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -60,11 +64,7 @@ const CurrentReservation = ({userId}) => {
           <h2 className="card-title justify-center">{currentReservation.Charger.name}</h2>
           {/* <h2 className="text-lg self-center">Car Model: Tesla</h2> */}
           <h2 className="text-lg self-center">{formatDate(currentReservation.datetime)}</h2>
-          <h2 className="text-lg self-center">Starts at: {formatTime(currentReservation.datetime)}</h2>
-  
-          <div className="card-actions justify-center mt-8">
-            <button className="btn btn-error text-secondary">Cancel Reservation</button>
-          </div>
+          <h2 className="text-lg self-center">Starts at: {formatTime(currentReservation.datetime)}</h2>  
         </div>
       </div>
     )
