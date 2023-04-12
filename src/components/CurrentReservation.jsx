@@ -11,7 +11,6 @@ const CurrentReservation = ({userId}) => {
       alert(res.error)
       return
     }
-    console.log(res.data.rows[0])
     setLoading(false)
     setCurrentReservation(res.data.rows[0])
   }
