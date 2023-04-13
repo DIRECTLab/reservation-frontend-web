@@ -15,8 +15,8 @@ const UpcomingReservations = ({ userId, encodedToken, setAlert, setError, setAle
       return;
     }
 
-    setLoading(false);
     setUpcomingReservations(res.data.rows);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -26,7 +26,6 @@ const UpcomingReservations = ({ userId, encodedToken, setAlert, setError, setAle
 
 
   const deleteReservation = async (id) => {
-    console.log(encodedToken)
     const res = await api.reservation(id).delete({}, encodedToken);
 
     if (res.error) {

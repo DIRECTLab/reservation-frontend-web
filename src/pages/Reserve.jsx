@@ -91,7 +91,7 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
   const reserveTime = async () => {
     
     let day = new Date(selectedDate.startDate)
-    day.setDate(day.getDate())
+    day.setDate(day.getDate()+1)
     day.setHours(selectedHour, 0, 0, 0, 0);
 
     
