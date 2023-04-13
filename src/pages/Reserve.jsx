@@ -15,7 +15,7 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
   const [chargerInformation, setChargerInformation] = useState([])
   const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: null });
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedHour, setSelectedHour] = useState(new Date().getHours());
+  const [selectedHour, setSelectedHour] = useState(new Date().getHours()+1);
 
   const [error, setError] = useState(false)
   const [alert, setAlert] = useState(false)
@@ -40,6 +40,7 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
 		let chargerInformation = chargersRes.data.rows.map(data => {
 			if (data.name !== null && data.latitude !== null && data.longitude !== null) {
 				let dataObject = {
+          "id": data.id,
 					"name": data.name,
 					"latitude": data.latitude,
 					"longitude": data.longitude
@@ -93,11 +94,11 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
     let day = new Date(selectedDate.startDate)
     day.setDate(day.getDate() + 1)
     day.setHours(selectedHour, 0, 0, 0, 0);
+
     
     const res = await api.reservation(token.id).reserve({
       'datetime': day,
-      'ChargerId': 1,
-      // 'charger': charger,
+      'ChargerId': charger.id,
       'UserId': token.id,
     }, encodedToken);
 		if (res.error) {
@@ -161,7 +162,7 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
             key={idx}
             eventHandlers={{
               click: (e) => {
-                setCharger(charger.name)
+                setCharger(charger)
                 document.getElementById('my-modal-6').checked = true;
 
               }
@@ -186,8 +187,6 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
         </div>
       </div>
 
-      <label htmlFor="my-modal-6" className="btn mt-4">Reserve Selected Charger</label>
-
 
       <input type="checkbox" id="my-modal-6" className="modal-toggle" />
       <div className="modal modal-bottom md:modal-middle ">
@@ -195,7 +194,7 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
           <label htmlFor="my-modal-6" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 
           <h3 className="font-bold text-lg">Reservation</h3>
-          <p className="py-4">You selected: <strong>{charger}</strong></p>
+          <p className="py-4">You selected: <strong>{charger.name}</strong></p>
           <h4>Choose a date for your reservation:</h4>
           <div className='mt-4'>
             <Datepicker
@@ -210,21 +209,21 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
           
           
           <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 mt-4 ${!isVisible ? "visible" : "hidden"}`}>
-            <button className="btn btn-primary text-secondary w-3/4" onClick={() => {setIsVisible(true)}}>
+            <button className="btn btn-primary text-secondary w-full" onClick={() => {setIsVisible(true)}}>
               Reservation Time: {formatHour(selectedHour)}
             </button>
+            <div className={`modal-action ${(selectableHours !== null && selectedDate !== null) ? '' : 'invisible'}`}>
+              <label htmlFor="my-modal-6" className="btn" onClick={() => {reserveTime()}}>Reserve</label>
+            </div>
           </div>
 
           <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 ${isVisible ? "visible" : "hidden"}`}>
             {selectableHours.map(time => (
-              <button className="btn btn-primary text-secondary w-3/4 mt-4" key={time} onClick={() => {setSelectedHour(time); setIsVisible(false)}}>{formatHour(time)}</button>
+              <button className="btn btn-primary text-secondary w-full mt-4" key={time} onClick={() => {setSelectedHour(time); setIsVisible(false)}}>{formatHour(time)}</button>
             ))}
           </div>
 
 
-          <div className="modal-action">
-            <label htmlFor="my-modal-6" className="btn" onClick={() => {reserveTime()}}>Reserve</label>
-          </div>
         </div>
 
       </div>
