@@ -274,15 +274,15 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
           <h4>Choose a date for your reservation:</h4>
           <div className='mt-4'>
             <Datepicker
-              primaryColor='blue'
+              primaryColor='green'
               minDate={yesterday}
               useRange={false}
               asSingle={true}
               value={selectedDate}
               readOnly={true}
               onChange={(newDate) => { setSelectedDate(newDate); setDateSet(true); }}
-              inputClassName="w-full rounded-md focus:ring-0 font-normal bg-slate-400 dark:bg-slate-400	"
-              classNames="bg-slate-400 dark:bg-slate-400"
+              inputClassName="w-full rounded-md focus:ring-0 font-normal dark:bg-white	"
+              classNames="dark:bg-white bg-white color-white"
             />
           </div>
 
