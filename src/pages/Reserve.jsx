@@ -20,6 +20,8 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
   const [error, setError] = useState(false)
   const [alert, setAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState("")
+  const [chargerSearch, setChargerSearch] = useState("");
+  const [matchingNames, setMatchingNames] = useState([]);
 
 
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
@@ -122,9 +124,7 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
     if (chargerId !== "" && chargerId !== undefined && date != null && date !== undefined) {
       let reservations = await api.getChargerReservations(chargerId, date).getAll();
       if (!reservations.error) {
-        console.log(reservations)
         let takenReservations = [];
-        console.log('Doing this');
 
         for (let i = 0; i < reservations.data.count; i++) {
 
@@ -146,13 +146,13 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
             }
           }
         }
-    
+
         setSelectableHours(availableHours);
         setSelectedHour(availableHours[0]);
 
       }
 
-      
+
 
     } else {
       if (selectedDate.startDate === todayDate) {
@@ -164,7 +164,7 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
           availableHours.push(i);
         }
       }
-  
+
       setSelectableHours(availableHours);
       setSelectedHour(availableHours[0]);
     }
@@ -173,8 +173,8 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
 
   useEffect(() => {
     getReservationsOnCharger(charger.id, selectedDate.startDate);
-    
-  }, [selectedDate])
+
+  }, [selectedDate, charger])
 
   useEffect(() => {
     setTimeout(() => {
@@ -217,17 +217,50 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
         </MapContainer>
       </div>
       <h2 className='text-md mt-4'>Search for it manually</h2>
-      <div className='relative w-4/5 flex justify-center'>
+      <div className='relative w-4/5 flex justify-center flex-col'>
         <div>
           <AiOutlineSearch className='absolute mt-6 ml-2 text-gray-500' />
           <input
             type="text"
             placeholder="Charger Name"
             className="input input-bordered w-full max-w-xs mt-2 placeholder: pl-8 placeholder: text-gray-500"
-            value={charger}
-            onChange={(event) => setCharger(event.target.value)}
+            value={chargerSearch}
+            onChange={(event) => {
+              let matchingChargerNames = [];
+
+              for (let i of chargerInformation) {
+                if (i.name.startsWith(event.target.value) && event.target.value !== "") {
+                  matchingChargerNames.push(i);
+                }
+              }
+
+              setMatchingNames(matchingChargerNames);
+              setChargerSearch(event.target.value)
+
+            }}
           />
         </div>
+        {matchingNames.length > 0 ?
+          <div className='outline-1	outline-black w-5/6 outline rounded p-1 shadow-lg my-2'>
+            <div className="divider my-0"/>
+            {matchingNames.map((charger, index) => (
+              <div key={index}>
+                <button className='p-1 py-2' onClick={() => {
+                  setCharger(charger);
+                  document.getElementById('my-modal-6').checked = true;
+                  setChargerSearch("");
+                  setMatchingNames([]);
+                  }}>
+                  {charger.name}
+                </button>
+                <div className="divider my-0"/>
+
+              </div>
+            ))}
+          </div>
+          :
+          <></>
+        }
       </div>
 
 
@@ -247,28 +280,28 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
               asSingle={true}
               value={selectedDate}
               readOnly={true}
-              onChange={(newDate) => {setSelectedDate(newDate); setDateSet(true); }}
-              inputClassName="w-full rounded-md focus:ring-0 font-normal bg-slate-400 dark:bg-slate-400	 dark:placeholder:text-black"
+              onChange={(newDate) => { setSelectedDate(newDate); setDateSet(true); }}
+              inputClassName="w-full rounded-md focus:ring-0 font-normal bg-slate-400 dark:bg-slate-400	"
               classNames="bg-slate-400 dark:bg-slate-400"
-/>
+            />
           </div>
 
           {dateSet ?
-          <div>
-            <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 mt-4 ${!isVisible ? "visible" : "hidden"}`}>
-              <button className="btn btn-primary text-secondary w-full" onClick={() => { setIsVisible(true) }}>
-                Reservation Time: {formatHour(selectedHour)}
-              </button>
-              <div className={`modal-action ${(selectableHours !== null && selectedDate !== null) ? '' : 'invisible'}`}>
-                <label htmlFor="my-modal-6" className="btn" onClick={() => { reserveTime() }}>Reserve</label>
+            <div>
+              <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 mt-4 ${!isVisible ? "visible" : "hidden"}`}>
+                <button className="btn btn-primary text-secondary w-full" onClick={() => { setIsVisible(true) }}>
+                  Reservation Time: {formatHour(selectedHour)}
+                </button>
+                <div className={`modal-action ${(selectableHours !== null && selectedDate !== null) ? '' : 'invisible'}`}>
+                  <label htmlFor="my-modal-6" className="btn" onClick={() => { reserveTime() }}>Reserve</label>
+                </div>
               </div>
-            </div>
-            
-            <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 ${isVisible ? "visible" : "hidden"}`}>
-              {selectableHours.map(time => (
-                <button className="btn btn-primary text-secondary w-full mt-4" key={time} onClick={() => { setSelectedHour(time); setIsVisible(false) }}>{formatHour(time)}</button>
-              ))}
-            </div>
+
+              <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 ${isVisible ? "visible" : "hidden"}`}>
+                {selectableHours.map(time => (
+                  <button className="btn btn-primary text-secondary w-full mt-4" key={time} onClick={() => { setSelectedHour(time); setIsVisible(false) }}>{formatHour(time)}</button>
+                ))}
+              </div>
             </div>
             :
             <></>
