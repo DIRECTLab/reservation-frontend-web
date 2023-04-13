@@ -218,7 +218,7 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
       </div>
       <h2 className='text-md mt-4'>Search for it manually</h2>
       <div className='relative w-4/5 flex justify-center flex-col'>
-        <div>
+        <div className='self-center'>
           <AiOutlineSearch className='absolute mt-6 ml-2 text-gray-500' />
           <input
             type="text"
