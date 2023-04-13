@@ -8,15 +8,15 @@ import api from '../api';
 import Datepicker from "react-tailwindcss-datepicker";
 import Alert from '../components/Alert';
 
-const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
+const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
   const [center, setCenter] = useState([41.759815029001956, -111.81735767016022])
   const [loading, setLoading] = useState(true)
   const [charger, setCharger] = useState("")
   const [chargerInformation, setChargerInformation] = useState([])
   const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: null });
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedHour, setSelectedHour] = useState(new Date().getHours()+1);
-
+  const [selectedHour, setSelectedHour] = useState(new Date().getHours() + 1);
+  const [dateSet, setDateSet] = useState();
   const [error, setError] = useState(false)
   const [alert, setAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState("")
@@ -32,25 +32,25 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
 
   const getChargers = async () => {
     const chargersRes = await api.getChargers()
-		if (chargersRes.error) {
+    if (chargersRes.error) {
       setError(true)
       setAlert(true)
       return
-		}
-		let chargerInformation = chargersRes.data.rows.map(data => {
-			if (data.name !== null && data.latitude !== null && data.longitude !== null) {
-				let dataObject = {
+    }
+    let chargerInformation = chargersRes.data.rows.map(data => {
+      if (data.name !== null && data.latitude !== null && data.longitude !== null) {
+        let dataObject = {
           "id": data.id,
-					"name": data.name,
-					"latitude": data.latitude,
-					"longitude": data.longitude
-				}
-				return dataObject
-			}
-		})
-		chargerInformation = chargerInformation.filter((element) => {
-   		return element !== undefined;
-		});
+          "name": data.name,
+          "latitude": data.latitude,
+          "longitude": data.longitude
+        }
+        return dataObject
+      }
+    })
+    chargerInformation = chargerInformation.filter((element) => {
+      return element !== undefined;
+    });
     setChargerInformation(chargerInformation)
   }
 
@@ -59,7 +59,7 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
       setMenuOpen(false)
     }
   }
-      
+
 
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1)
@@ -86,52 +86,96 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
   useEffect(() => {
     setLoading(true)
     getChargers()
+    setDateSet(false);
   }, [])
 
   const reserveTime = async () => {
-    
+
     let day = new Date(selectedDate.startDate)
-    day.setDate(day.getDate()+1)
+    day.setDate(day.getDate() + 1)
     day.setHours(selectedHour, 0, 0, 0, 0);
 
-    
+
     const res = await api.reservation(token.id).reserve({
       'datetime': day,
       'ChargerId': charger.id,
       'UserId': token.id,
     }, encodedToken);
-		if (res.error) {
+    if (res.error) {
       setError(true)
       setAlertMessage(res.error)
       setAlert(true)
       return
-		}
+    }
     else {
       setError(false)
       setAlertMessage("Reservation Made")
       setAlert(true)
+      getReservationsOnCharger(charger.id, selectedDate.startDate);
     }
   }
 
-  
-  useEffect(() => {
-    let date = `${new Date().toLocaleDateString('en-ca')}`
+  const getReservationsOnCharger = async (chargerId, date) => {
+    let todayDate = `${new Date().toLocaleDateString('en-ca')}`
     let availableHours = [];
 
-    if (selectedDate.startDate === date) {
-      for (let i = currentHour + 1; i < 24; i++) {
-        availableHours.push(i);
-      }
-    } else {
-      for (let i = 0; i < 24; i++) {
-        availableHours.push(i);
-      }
-    }
+    if (chargerId !== "" && chargerId !== undefined && date != null && date !== undefined) {
+      let reservations = await api.getChargerReservations(chargerId, date).getAll();
+      if (!reservations.error) {
+        console.log(reservations)
+        let takenReservations = [];
+        console.log('Doing this');
+
+        for (let i = 0; i < reservations.data.count; i++) {
+
+          let tempDate = new Date(reservations.data.rows[i].datetime);
+          takenReservations.push(tempDate.getHours())
+        }
+
+
+        if (selectedDate.startDate === todayDate) {
+          for (let i = currentHour + 1; i < 24; i++) {
+            if (!takenReservations.includes(i)) {
+              availableHours.push(i);
+            }
+          }
+        } else {
+          for (let i = 0; i < 24; i++) {
+            if (!takenReservations.includes(i)) {
+              availableHours.push(i);
+            }
+          }
+        }
     
-    setSelectableHours(availableHours);
+        setSelectableHours(availableHours);
+        setSelectedHour(availableHours[0]);
+
+      }
+
+      
+
+    } else {
+      if (selectedDate.startDate === todayDate) {
+        for (let i = currentHour + 1; i < 24; i++) {
+          availableHours.push(i);
+        }
+      } else {
+        for (let i = 0; i < 24; i++) {
+          availableHours.push(i);
+        }
+      }
+  
+      setSelectableHours(availableHours);
+      setSelectedHour(availableHours[0]);
+    }
+  }
+
+
+  useEffect(() => {
+    getReservationsOnCharger(charger.id, selectedDate.startDate);
     
   }, [selectedDate])
-  
+
   useEffect(() => {
     setTimeout(() => {
       setAlert(false)
@@ -154,22 +198,22 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
               contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          { chargerInformation.map((charger, idx) => (
-          <Marker 
-            position={[charger.latitude, charger.longitude]}
-            icon={chargerIcon}
-            key={idx}
-            eventHandlers={{
-              click: (e) => {
-                setCharger(charger)
-                document.getElementById('my-modal-6').checked = true;
+          {chargerInformation.map((charger, idx) => (
+            <Marker
+              position={[charger.latitude, charger.longitude]}
+              icon={chargerIcon}
+              key={idx}
+              eventHandlers={{
+                click: (e) => {
+                  setCharger(charger)
+                  document.getElementById('my-modal-6').checked = true;
 
-              }
-            }}
-          >
-          </Marker>
-        )
-        )}
+                }
+              }}
+            >
+            </Marker>
+          )
+          )}
         </MapContainer>
       </div>
       <h2 className='text-md mt-4'>Search for it manually</h2>
@@ -202,26 +246,33 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
               useRange={false}
               asSingle={true}
               value={selectedDate}
-              onChange={setSelectedDate}
-            />
+              readOnly={true}
+              onChange={(newDate) => {setSelectedDate(newDate); setDateSet(true); }}
+              inputClassName="w-full rounded-md focus:ring-0 font-normal bg-slate-400 dark:bg-slate-400	 dark:placeholder:text-black"
+              classNames="bg-slate-400 dark:bg-slate-400"
+/>
           </div>
-          
-          
-          <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 mt-4 ${!isVisible ? "visible" : "hidden"}`}>
-            <button className="btn btn-primary text-secondary w-full" onClick={() => {setIsVisible(true)}}>
-              Reservation Time: {formatHour(selectedHour)}
-            </button>
-            <div className={`modal-action ${(selectableHours !== null && selectedDate !== null) ? '' : 'invisible'}`}>
-              <label htmlFor="my-modal-6" className="btn" onClick={() => {reserveTime()}}>Reserve</label>
+
+          {dateSet ?
+          <div>
+            <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 mt-4 ${!isVisible ? "visible" : "hidden"}`}>
+              <button className="btn btn-primary text-secondary w-full" onClick={() => { setIsVisible(true) }}>
+                Reservation Time: {formatHour(selectedHour)}
+              </button>
+              <div className={`modal-action ${(selectableHours !== null && selectedDate !== null) ? '' : 'invisible'}`}>
+                <label htmlFor="my-modal-6" className="btn" onClick={() => { reserveTime() }}>Reserve</label>
+              </div>
             </div>
-          </div>
-
-          <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 ${isVisible ? "visible" : "hidden"}`}>
-            {selectableHours.map(time => (
-              <button className="btn btn-primary text-secondary w-full mt-4" key={time} onClick={() => {setSelectedHour(time); setIsVisible(false)}}>{formatHour(time)}</button>
-            ))}
-          </div>
-
+            
+            <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 ${isVisible ? "visible" : "hidden"}`}>
+              {selectableHours.map(time => (
+                <button className="btn btn-primary text-secondary w-full mt-4" key={time} onClick={() => { setSelectedHour(time); setIsVisible(false) }}>{formatHour(time)}</button>
+              ))}
+            </div>
+            </div>
+            :
+            <></>
+          }
 
         </div>
 

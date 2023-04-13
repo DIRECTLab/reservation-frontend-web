@@ -39,7 +39,10 @@ const api = {
     getCurrent: r('get', `reservation/current?UserId=${userId}&startDate=${new Date()}`),
     getUpcoming: r('get', `reservation?UserId=${userId}&upcoming=true`),
     reserve: r('post', `reservation`),
-    delete: r('delete', `reservation?id=${userId}`)
+    delete: r('delete', `reservation?id=${userId}`),
+  }),
+  getChargerReservations: (chargerId, date) => ({ 
+    getAll: r('get', `reservation/reserved_times?chargerId=${chargerId}&date=${date}`) 
   }),
   createUser: r('post', `user`),
   login: r('post', `user/login`),
