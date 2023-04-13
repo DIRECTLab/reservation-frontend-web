@@ -88,11 +88,10 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
     getChargers()
   }, [])
 
-  // TODO: Change back to 'ChargerId': charger
   const reserveTime = async () => {
     
     let day = new Date(selectedDate.startDate)
-    day.setDate(day.getDate() + 1)
+    day.setDate(day.getDate())
     day.setHours(selectedHour, 0, 0, 0, 0);
 
     
