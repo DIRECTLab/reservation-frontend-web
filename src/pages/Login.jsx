@@ -1,17 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../api";
+import Alert from "../components/Alert";
 
 const Login = ({setToken}) => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [alert, setAlert] = useState(false)
+  const [error, setError] = useState(false)
+  const [alertMessage, setAlertMessage] = useState("")
+
+  useEffect(() => {
+    setTimeout(() => {
+      setAlert(false)
+      setError(false)
+      setAlertMessage("")
+    }, 5000)
+  }, [alert])
 
   const login = async () => {
     if (username === "") {
-      alert("Please enter username")
+      setError(true)
+      setAlertMessage("Please enter username")
+      setAlert(true)
       return
     }
     if (password === "") {
-      alert("Please enter a password")
+      setError(true)
+      setAlertMessage("Please enter a password")
+      setAlert(true)
       return
     }
 
@@ -20,7 +36,9 @@ const Login = ({setToken}) => {
       'password': password,
     })
     if (res.error) {
-      alert(res.error)
+      setError(true)
+      setAlertMessage(res.error)
+      setAlert(true)
       return
     }
     else {
@@ -31,6 +49,9 @@ const Login = ({setToken}) => {
 
   return (
     <div className="flex flex-col items-center justify-center">
+      {alert &&
+        <Alert error={error} message={alertMessage} />
+      }
       <h1 className="text-2xl mt-4 font-bold">Login</h1>
       <div className="form-control w-4/5 max-w-xs mt-16">
         <label className="label">

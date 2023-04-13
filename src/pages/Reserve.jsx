@@ -19,6 +19,8 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
 
   const [error, setError] = useState(false)
   const [alert, setAlert] = useState(false)
+  const [alertMessage, setAlertMessage] = useState("")
+
 
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
   const [selectableHours, setSelectableHours] = useState([]);
@@ -100,18 +102,20 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
     }, encodedToken);
 		if (res.error) {
       setError(true)
+      setAlertMessage(res.error)
       setAlert(true)
       return
 		}
     else {
       setError(false)
+      setAlertMessage("Reservation Made")
       setAlert(true)
     }
   }
 
   
   useEffect(() => {
-    let date = `${new Date().toLocaleDateString('en-CA')}`
+    let date = `${new Date().toLocaleDateString('en-ca')}`
     let availableHours = [];
 
     if (selectedDate.startDate === date) {
@@ -132,13 +136,14 @@ const Reserve = ({token, menuOpen, setMenuOpen, encodedToken}) => {
     setTimeout(() => {
       setAlert(false)
       setError(false)
+      setAlertMessage("")
     }, 5000)
   }, [alert])
 
   return (
     <div className="flex flex-col items-center justify-center" onClick={closeMenu}>
       {alert &&
-        <Alert error={error} />
+        <Alert error={error} message={alertMessage} />
       }
       <h1 className="text-2xl font-bold mt-4">Reserve</h1>
       <h2 className='text-md mt-4'>Select the charger you want to reserve</h2>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 
-const UpcomingReservations = ({ userId, encodedToken, setAlert, setError }) => {
+const UpcomingReservations = ({ userId, encodedToken, setAlert, setError, setAlertMessage}) => {
   const [upcomingReservations, setUpcomingReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -10,6 +10,7 @@ const UpcomingReservations = ({ userId, encodedToken, setAlert, setError }) => {
 
     if (res.error) {
       setError(true)
+      setAlertMessage(res.error)
       setAlert(true)
       return;
     }

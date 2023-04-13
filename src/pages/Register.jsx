@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 
@@ -8,30 +8,54 @@ const Register = ({setToken}) => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
+  const [alert, setAlert] = useState(false)
+  const [error, setError] = useState(false)
+  const [alertMessage, setAlertMessage] = useState("")
+
+  useEffect(() => {
+    setTimeout(() => {
+      setAlert(false)
+      setError(false)
+      setAlertMessage("")
+    }, 5000)
+  }, [alert])
+
 
   const createUser = async () => {
     if (username === "") {
-      alert("Please fill out your username")
+      setAlert(true)
+      setError(true)
+      setAlertMessage("Please fill out your username")
       return
     }
     if (password === "") {
-      alert("Please fill out your password")
+      setAlert(true)
+      setError(true)
+      setAlertMessage("Please fill out your password")
       return
     }
     if (confirmPassword === "") {
-      alert("Please confirm the password")
+      setAlert(true)
+      setError(true)
+      setAlertMessage("Please confirm the password")
       return
     }
     if (firstName === "") {
-      alert("Please fill out your first name")
+      setAlert(true)
+      setError(true)
+      setAlertMessage("Please fill out your first name")
       return
     }
     if (lastName === "") {
-      alert("Please fill out your last name")
+      setAlert(true)
+      setError(true)
+      setAlertMessage("Please fill out your last name")
       return
     }
     if (password !== confirmPassword) {
-      alert("Passwords do not match")
+      setAlert(true)
+      setError(true)
+      setAlertMessage("Passwords do not match")
       return
     }
     const res = await api.createUser({
@@ -41,17 +65,23 @@ const Register = ({setToken}) => {
       'lastName': lastName
     })
     if (res.error) {
-      alert(res.error)
+      setAlert(true)
+      setError(true)
+      setAlertMessage(res.error)
       return
     }
     else {
-      alert("Successfully Created User")
+      setAlert(true)
+      setError(false)
+      setAlertMessage("Successfully Created User")
       const loginRes = await api.login({
         'username': username,
         'password': password,
       })
       if (loginRes.error) {
-        alert(loginRes.error)
+        setAlert(true)
+        setError(false)
+        setAlertMessage(loginRes.error)
         return
       }
       else {
