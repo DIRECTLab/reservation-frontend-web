@@ -27,7 +27,7 @@ const requestGenerator = (getBase) => (method, uri) => (data = {}, authorization
 }
 
 const getApiBase = () => 'http://localhost:11236' // Development
-//const getApiBase = () => '' // Production
+//const getApiBase = () => 'http://129.123.202.136:11236' // Production
 const r = requestGenerator(getApiBase);
 
 const api = {
