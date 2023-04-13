@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api";
 import Alert from "../components/Alert";
 
+
 const Login = ({setToken}) => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -68,6 +69,12 @@ const Login = ({setToken}) => {
         onClick={() => login()}
       >
         Login
+      </button>
+      <button 
+        className="btn btn-primary text-secondary w-4/5 md:w-1/5 mt-8"
+        onClick={() => window.location.pathname = "/register"}
+      >
+        Don't have an account?
       </button>
     </div>
   )

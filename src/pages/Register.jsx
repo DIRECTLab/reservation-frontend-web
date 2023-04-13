@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api";
-import { useNavigate } from "react-router-dom";
+import Alert from "../components/Alert";
 
 const Register = ({setToken}) => {
   const [username, setUsername] = useState("")
@@ -14,18 +14,18 @@ const Register = ({setToken}) => {
 
   useEffect(() => {
     setTimeout(() => {
-      setAlert(false)
       setError(false)
       setAlertMessage("")
+      setAlert(false)
     }, 5000)
   }, [alert])
 
 
   const createUser = async () => {
     if (username === "") {
-      setAlert(true)
       setError(true)
       setAlertMessage("Please fill out your username")
+      setAlert(true)
       return
     }
     if (password === "") {
@@ -80,14 +80,13 @@ const Register = ({setToken}) => {
       })
       if (loginRes.error) {
         setAlert(true)
-        setError(false)
+        setError(true)
         setAlertMessage(loginRes.error)
         return
       }
       else {
-        setToken(loginRes.data.token)
         window.location.pathname = "/"
-        //routeChange("/")
+        setToken(loginRes.data.token)
       }
     }
 
@@ -95,6 +94,9 @@ const Register = ({setToken}) => {
   
   return (
     <div className="flex flex-col items-center justify-center">
+      {alert &&
+        <Alert error={error} message={alertMessage}/>
+      }
       <h1 className="text-2xl mt-4 font-bold">Register</h1>
       <div className="form-control w-4/5 max-w-xs mt-2">
         <label className="label">
@@ -119,10 +121,16 @@ const Register = ({setToken}) => {
         <input type="password" placeholder="Confirm Password" className="input input-bordered w-full max-w-xs" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)}/>
       </div>
       <button 
-        className="btn btn-primary text-secondary w-4/5 md:w-1/5 my-8"
+        className="btn btn-primary text-secondary w-4/5 md:w-1/5 mt-8"
         onClick={() => createUser()}
       >
         Register
+      </button>
+      <button 
+        className="btn btn-primary text-secondary w-4/5 md:w-1/5 my-8"
+        onClick={() => window.location.pathname = "/"}
+      >
+        Already have an account?
       </button>
     </div>
   )
