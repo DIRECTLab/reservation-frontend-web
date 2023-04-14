@@ -229,7 +229,7 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
               let matchingChargerNames = [];
 
               for (let i of chargerInformation) {
-                if (i.name.startsWith(event.target.value) && event.target.value !== "") {
+                if (i.name.toLowerCase().startsWith(event.target.value.toLowerCase()) && event.target.value !== "") {
                   matchingChargerNames.push(i);
                 }
               }
