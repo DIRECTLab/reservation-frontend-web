@@ -217,6 +217,10 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
         </MapContainer>
       </div>
       <h2 className='text-md mt-4'>Search for it manually</h2>
+      <button className='btn' type='button' onClick={async () => {
+        const res = await api.favorites.get({ params: { UserId: token.id }}, encodedToken);
+        console.log(res);
+      }}>PUSH ME</button>
       <div className='relative w-4/5 flex justify-center flex-col'>
         <div className='self-center'>
           <AiOutlineSearch className='absolute mt-6 ml-2 text-gray-500' />
