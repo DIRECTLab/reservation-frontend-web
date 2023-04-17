@@ -281,7 +281,7 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
               value={selectedDate}
               readOnly={true}
               onChange={(newDate) => { setSelectedDate(newDate); setDateSet(true); }}
-              inputClassName="w-full rounded-md focus:ring-0 font-normal dark:bg-white	"
+              inputClassName="w-full rounded-md focus:ring-0 font-normal text-gray-500 dark:bg-white dark:text-gray-500"
               classNames="dark:bg-white bg-white"
             />
           </div>
