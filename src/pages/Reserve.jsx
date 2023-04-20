@@ -1,15 +1,15 @@
-import 'leaflet/dist/leaflet.css';
+// import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import '../index.css'
+// import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+// import '../index.css'
 import { AiOutlineSearch } from "react-icons/ai"
-import L from 'leaflet'
+// import L from 'leaflet'
 import api from '../api';
 import Datepicker from "react-tailwindcss-datepicker";
 import Alert from '../components/Alert';
+import ReserveMap from "../components/ReserveMap";
 
 const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
-  const [center, setCenter] = useState([41.759815029001956, -111.81735767016022])
   const [loading, setLoading] = useState(true)
   const [charger, setCharger] = useState("")
   const [chargerInformation, setChargerInformation] = useState([])
@@ -27,10 +27,7 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
   const [selectableHours, setSelectableHours] = useState([]);
 
-  const chargerIcon = L.icon({
-    iconUrl: 'chargerIcon.png',
-    iconSize: [30, 30]
-  })
+
 
   const getChargers = async () => {
     const chargersRes = await api.getChargers()
@@ -126,7 +123,7 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
       if (!reservations.error) {
         let takenReservations = [];
 
-        for (let i = 0; i < reservations.data.count; i++) {
+        for (let i = 0; i < reservations.data?.count ?? 0; i++) {
 
           let tempDate = new Date(reservations.data.rows[i].datetime);
           takenReservations.push(tempDate.getHours())
@@ -171,6 +168,10 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
   }
 
 
+  const selectCharger = (charger) => {
+    setCharger(charger)
+  }
+
   useEffect(() => {
     getReservationsOnCharger(charger.id, selectedDate.startDate);
 
@@ -191,31 +192,8 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
       }
       <h1 className="text-2xl font-bold mt-4">Reserve</h1>
       <h2 className='text-md mt-4'>Select the charger you want to reserve</h2>
-      <div id="map-container" className={`flex content-center items-center w-4/5 mt-4 ${menuOpen ? '-z-10' : 'z-10'}`} >
-        <MapContainer center={center} zoom={15}>
-          <TileLayer
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> 
-              contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {chargerInformation.map((charger, idx) => (
-            <Marker
-              position={[charger.latitude, charger.longitude]}
-              icon={chargerIcon}
-              key={idx}
-              eventHandlers={{
-                click: (e) => {
-                  setCharger(charger)
-                  document.getElementById('my-modal-6').checked = true;
+      <ReserveMap menuOpen={menuOpen} chargerInformation={chargerInformation} selectCharger={selectCharger}/>
 
-                }
-              }}
-            >
-            </Marker>
-          )
-          )}
-        </MapContainer>
-      </div>
       <h2 className='text-md mt-4'>Search for it manually</h2>
       <button className='btn' type='button' onClick={async () => {
         const res = await api.favorites.get({ params: { UserId: token.id }}, encodedToken);
