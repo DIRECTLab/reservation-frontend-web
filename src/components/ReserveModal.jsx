@@ -87,7 +87,6 @@ const ReserveModal = ({token, encodedToken, charger, setError, setAlertMessage, 
             }
           }
         }
-
         setSelectableHours(availableHours);
         setSelectedHour(availableHours[0]);
 
