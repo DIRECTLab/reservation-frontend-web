@@ -50,11 +50,6 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
     getChargers()
   }, [])
 
-
-
-
-
-
   const selectCharger = (charger) => {
     setCharger(charger)
   }
@@ -89,10 +84,6 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
         <FavoriteChargers token={token} encodedToken={encodedToken}/>
       </div>
       <ReserveModal token={token} encodedToken={encodedToken} charger={charger} setError={setError} setAlertMessage={setAlertMessage} setAlert={setAlert}/>
-
-
-      
-
     </div>
   )
 }
