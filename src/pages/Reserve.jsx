@@ -22,13 +22,13 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
   const [alertMessage, setAlertMessage] = useState("")
 
   const getChargers = async () => {
-    const chargersRes = await api.getChargers()
+    const chargersRes = await api.getChargers();
     if (chargersRes.error) {
       setError(true)
       setAlert(true)
       return
     }
-    let chargerInformation = chargersRes.data.rows.map(data => {
+    let chargerInformation = chargersRes.data.map(data => {
       if (data.name !== null && data.latitude !== null && data.longitude !== null) {
         let dataObject = {
           "id": data.id,
@@ -54,6 +54,35 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
     setCharger(charger)
   }
 
+  const getReservationsOnCharger = async (chargerId, date) => {
+    let todayDate = `${new Date().toLocaleDateString('en-ca')}`
+    let availableHours = [];
+
+    if (chargerId !== "" && chargerId !== undefined && date != null && date !== undefined) {
+      let reservations = await api.getChargerReservations(chargerId, date).getAll();
+      if (!reservations.error) {
+        let takenReservations = [];
+
+        for (let i = 0; i < reservations.data.count; i++) {
+
+          let tempDate = new Date(reservations.data[i].datetime);
+          takenReservations.push(tempDate.getHours())
+        }
+
+
+        if (selectedDate.startDate === todayDate) {
+          for (let i = currentHour + 1; i < 24; i++) {
+            if (!takenReservations.includes(i)) {
+              availableHours.push(i);
+            }
+          }
+        } else {
+          for (let i = 0; i < 24; i++) {
+            if (!takenReservations.includes(i)) {
+              availableHours.push(i);
+            }
+          }
+        }
 
   const closeMenu = () => {
     if (menuOpen) {

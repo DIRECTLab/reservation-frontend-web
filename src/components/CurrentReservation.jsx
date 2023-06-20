@@ -15,7 +15,7 @@ const CurrentReservation = ({userId, menuOpen, setError, setAlert, setAlertMessa
       return
     }
     setLoading(false)
-    setCurrentReservation(res.data.rows[0])
+    setCurrentReservation(res.data[0])
   }
 
 
