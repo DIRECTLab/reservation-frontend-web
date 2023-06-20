@@ -33,13 +33,13 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
   })
 
   const getChargers = async () => {
-    const chargersRes = await api.getChargers()
+    const chargersRes = await api.getChargers();
     if (chargersRes.error) {
       setError(true)
       setAlert(true)
       return
     }
-    let chargerInformation = chargersRes.data.rows.map(data => {
+    let chargerInformation = chargersRes.data.map(data => {
       if (data.name !== null && data.latitude !== null && data.longitude !== null) {
         let dataObject = {
           "id": data.id,
@@ -128,7 +128,7 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
 
         for (let i = 0; i < reservations.data.count; i++) {
 
-          let tempDate = new Date(reservations.data.rows[i].datetime);
+          let tempDate = new Date(reservations.data[i].datetime);
           takenReservations.push(tempDate.getHours())
         }
 

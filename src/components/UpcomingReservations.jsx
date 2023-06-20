@@ -15,7 +15,7 @@ const UpcomingReservations = ({ userId, encodedToken, setAlert, setError, setAle
       return;
     }
 
-    setUpcomingReservations(res.data.rows);
+    setUpcomingReservations(res.data);
     setLoading(false);
   }
 
