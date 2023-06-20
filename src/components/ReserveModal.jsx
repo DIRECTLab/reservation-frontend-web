@@ -67,9 +67,9 @@ const ReserveModal = ({token, encodedToken, charger, setError, setAlertMessage, 
       if (!reservations.error) {
         let takenReservations = [];
 
-        for (let i = 0; i < reservations.data?.count ?? 0; i++) {
+        for (let i = 0; i < reservations.data?.length ?? 0; i++) {
 
-          let tempDate = new Date(reservations.data.rows[i].datetime);
+          let tempDate = new Date(reservations.data[i].datetime);
           takenReservations.push(tempDate.getHours())
         }
 
@@ -136,7 +136,7 @@ const ReserveModal = ({token, encodedToken, charger, setError, setAlertMessage, 
               value={selectedDate}
               readOnly={true}
               onChange={(newDate) => { setSelectedDate(newDate); setDateSet(true); }}
-              inputClassName="w-full rounded-md focus:ring-0 font-normal text-gray-500 dark:bg-white dark:text-gray-500"
+              inputClassName="w-full rounded-md focus:ring-0 font-normal !text-gray-500 dark:bg-white !dark:text-gray-500"
               classNames="dark:bg-white bg-white"
             />
           </div>

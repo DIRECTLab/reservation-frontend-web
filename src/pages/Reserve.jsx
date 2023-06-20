@@ -54,35 +54,38 @@ const Reserve = ({ token, menuOpen, setMenuOpen, encodedToken }) => {
     setCharger(charger)
   }
 
-  const getReservationsOnCharger = async (chargerId, date) => {
-    let todayDate = `${new Date().toLocaleDateString('en-ca')}`
-    let availableHours = [];
+  // const getReservationsOnCharger = async (chargerId, date) => {
+  //   let todayDate = `${new Date().toLocaleDateString('en-ca')}`
+  //   let availableHours = [];
 
-    if (chargerId !== "" && chargerId !== undefined && date != null && date !== undefined) {
-      let reservations = await api.getChargerReservations(chargerId, date).getAll();
-      if (!reservations.error) {
-        let takenReservations = [];
+  //   if (chargerId !== "" && chargerId !== undefined && date != null && date !== undefined) {
+  //     let reservations = await api.getChargerReservations(chargerId, date).getAll();
+  //     if (!reservations.error) {
+  //       let takenReservations = [];
 
-        for (let i = 0; i < reservations.data.count; i++) {
+  //       for (let i = 0; i < reservations.data.count; i++) {
 
-          let tempDate = new Date(reservations.data[i].datetime);
-          takenReservations.push(tempDate.getHours())
-        }
+  //         let tempDate = new Date(reservations.data[i].datetime);
+  //         takenReservations.push(tempDate.getHours())
+  //       }
 
 
-        if (selectedDate.startDate === todayDate) {
-          for (let i = currentHour + 1; i < 24; i++) {
-            if (!takenReservations.includes(i)) {
-              availableHours.push(i);
-            }
-          }
-        } else {
-          for (let i = 0; i < 24; i++) {
-            if (!takenReservations.includes(i)) {
-              availableHours.push(i);
-            }
-          }
-        }
+  //       if (selectedDate.startDate === todayDate) {
+  //         for (let i = currentHour + 1; i < 24; i++) {
+  //           if (!takenReservations.includes(i)) {
+  //             availableHours.push(i);
+  //           }
+  //         }
+  //       } else {
+  //         for (let i = 0; i < 24; i++) {
+  //           if (!takenReservations.includes(i)) {
+  //             availableHours.push(i);
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   const closeMenu = () => {
     if (menuOpen) {

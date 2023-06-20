@@ -18,9 +18,9 @@ const FavoriteChargers = ({token, encodedToken}) => {
 
   return (
     <>
-      {favoriteChargers.map((charger, idx) => {
+      {favoriteChargers.map((charger, idx) => 
         <button key={idx} className='btn' type='button' onClick={() => {console.log(charger)}}>PUSH ME</button>
-      })}
+      )}
     </>
   )
 }
