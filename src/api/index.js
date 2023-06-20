@@ -11,8 +11,10 @@ const requestGenerator = (getBase) => (method, uri) => (data = {}, authorization
   let requestPromise;
   switch (method) {
     case methods.get:
+      requestPromise = axios[method](`${getBase()}/${uri}`, {...data, headers: { authorization } });
+      break;
     case methods.post:
-      requestPromise = axios[method](`${getBase()}/${uri}`, {...data}, {headers: {authorization}});
+      requestPromise = axios[method](`${getBase()}/${uri}`, {...data}, {headers: {authorization: authorization}});
       break;
     case methods.delete:
       requestPromise = axios[method](`${getBase()}/${uri}`, {headers: {authorization}});
@@ -49,6 +51,11 @@ const api = {
   login: r('post', `user/login`),
   user: (userId) => ({
     getUser: r('get', `user?id=${userId}`),
-  })
+  }),
+  favorites: {
+    get: r('get', 'favorite'),
+    add: r('post', 'favorite'),
+    remove: r('delete', 'favorite'),
+  },
 }
 export default api
