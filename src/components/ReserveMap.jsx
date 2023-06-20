@@ -29,7 +29,6 @@ const ReserveMap = ({menuOpen, chargerInformation, selectCharger}) => {
               click: (e) => {
                 selectCharger(charger)
                 document.getElementById('my-modal-6').checked = true;
-
               }
             }}
           >
