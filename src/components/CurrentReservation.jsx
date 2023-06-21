@@ -46,7 +46,7 @@ const CurrentReservation = ({userId, menuOpen, setError, setAlert, setAlertMessa
     return (
       <div className={`card w-4/5 md:w-3/5 bg-base-100 shadow-xl flex justify-center items-center ${menuOpen ? '-z-10' : ''}`}>
         <div className="card-body">
-          <h2 className="card-title justify-center">No Current Reservation</h2>
+          <h2 className="card-title justify-center text-center">No Current Reservation</h2>
           <div className="card-actions justify-center mt-8">
             <button 
               className="btn btn-primary text-secondary"
