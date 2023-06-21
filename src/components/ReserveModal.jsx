@@ -155,8 +155,8 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
 
                 <input type="range" min={0} max={100} value={chargeAmount} className="range range-lg mt-4" onChange={handleSliderInput}/>
                 <div className="w-full flex flex-row mt-2">
-                  <span className="text-xs flex-auto">Least Charge</span>
-                  <span className="text-xs flex-auto text-right">Most Charge</span>
+                  <span className="text-xs flex-auto">Slowest Rate</span>
+                  <span className="text-xs flex-auto text-right">Fastest Rate</span>
                 </div>
 
 
