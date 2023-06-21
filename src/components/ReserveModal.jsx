@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import Datepicker from "react-tailwindcss-datepicker";
 import api from "../api";
 
-const ReserveModal = ({token, encodedToken, charger, setError, setAlertMessage, setAlert}) => {
+const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage, setAlert }) => {
   const [dateSet, setDateSet] = useState();
   const [isVisible, setIsVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: null });
   const [selectedHour, setSelectedHour] = useState(new Date().getHours() + 1);
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
   const [selectableHours, setSelectableHours] = useState([]);
+  const [chargeAmount, setChargeAmount] = useState(50);
 
 
   useEffect(() => {
@@ -115,6 +116,10 @@ const ReserveModal = ({token, encodedToken, charger, setError, setAlertMessage, 
 
   }, [selectedDate, charger])
 
+  const handleSliderInput = (event) => {
+    setChargeAmount(event.target.value);
+  }
+
 
 
   return (
@@ -147,10 +152,19 @@ const ReserveModal = ({token, encodedToken, charger, setError, setAlertMessage, 
                 <button className="btn btn-primary text-secondary w-full" onClick={() => { setIsVisible(true) }}>
                   Reservation Time: {formatHour(selectedHour)}
                 </button>
-                <div className={`modal-action ${(selectableHours !== null && selectedDate !== null) ? '' : 'invisible'}`}>
-                  <label htmlFor="my-modal-6" className="btn" onClick={() => { reserveTime() }}>Reserve</label>
+
+                <input type="range" min={0} max={100} value={chargeAmount} className="range range-lg mt-4" onChange={handleSliderInput}/>
+                <div className="w-full flex flex-row mt-2">
+                  <span className="text-xs flex-auto">Least Charge</span>
+                  <span className="text-xs flex-auto text-right">Most Charge</span>
+                </div>
+
+
+                <div className={`modal-action w-full ${(selectableHours !== null && selectedDate !== null) ? '' : 'invisible'}`}>
+                  <label htmlFor="my-modal-6" className="btn w-full" onClick={() => { reserveTime() }}>Reserve</label>
                 </div>
               </div>
+
 
               <div className={`overflow-x-auto w-full flex flex-col items-center h-1/2 ${isVisible ? "visible" : "hidden"}`}>
                 {selectableHours.map(time => (
@@ -161,6 +175,7 @@ const ReserveModal = ({token, encodedToken, charger, setError, setAlertMessage, 
             :
             <></>
           }
+
 
         </div>
 
