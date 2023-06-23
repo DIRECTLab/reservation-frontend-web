@@ -34,9 +34,9 @@ const r = requestGenerator(getApiBase);
 
 const api = {
   getChargers: r('get', 'charger'),
-  charger: (chargerId) => ({
-    get: r('get', `charger/${chargerId}`)
-  }),
+  charger: {
+    getOptimalChargeRange: r('get', 'charger/optimal-range')
+  },
   reservation: (userId) => ({
     getAll: r('get', `reservation?UserId=${userId}&all=true`),
     getCurrent: r('get', `reservation/current?UserId=${userId}&startDate=${new Date()}`),

@@ -2,6 +2,69 @@ import { useEffect, useState } from "react";
 import Datepicker from "react-tailwindcss-datepicker";
 import api from "../api";
 
+function rgb2hex(r, g, b) {
+  if (r > 255 || g > 255 || b > 255) {
+    throw "Invalid color component";
+  }
+  return ((r << 16) | (g << 8) | b).toString(16);
+}
+
+class Color {
+  constructor(r, g, b) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+  }
+
+  toString() {
+    return `rgba(${this.r}, ${this.g}, ${this.b}, 1)`
+  }
+
+  toHex() {
+    return rgb2hex(this.r * 255, this.g * 255, this.b * 255);
+  }
+}
+
+function blendColors(color1, color2, step) {
+  // blends colors with linear interpolation, step should be 0-1
+  return new Color(color1.r * (1 - step) + color2.r * step, color1.g * (1 - step) + color2.g * step, color1.b * (1 - step) + color2.b * step);
+}
+
+
+
+class Gradient {
+  constructor(colors, steps) {
+    // takes in an array of colors and steps where it should be applied
+    // where step is the point you want it to 'become' that color. There should always be at least 2 colors, one at the minimum value, one at the max
+    this.colors = colors;
+    this.steps = steps;
+  }
+
+  evaluate(value) {
+    let color1, step1;
+    let color2, step2;
+    for (let i = 0; i < this.colors.length - 1; i++) {
+      if (value >= this.steps[i] && value <= this.steps[i + 1]) {
+        color1 = this.colors[i];
+        step1 = this.steps[i];
+        color2 = this.colors[i + 1];
+        step2 = this.steps[i + 1];
+        break;
+      }
+    }
+    if (!color1) {
+      throw new Error("Invalid colors, steps, or value.");
+    }
+
+    const step = (value - step1) / (step2 - step1);
+    const blendedColor = blendColors(color1, color2, step);
+    return blendedColor.toHex();
+  }
+}
+
+
+
+
 const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage, setAlert }) => {
   const [dateSet, setDateSet] = useState();
   const [isVisible, setIsVisible] = useState(false);
@@ -10,6 +73,7 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
   const [selectableHours, setSelectableHours] = useState([]);
   const [chargeAmount, setChargeAmount] = useState(50);
+  const [optimalChargeRange, setOptimalChargeRange] = useState({});
 
 
   useEffect(() => {
@@ -116,6 +180,33 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
 
   }, [selectedDate, charger])
 
+  const loadNewRange = async () => {
+    const res = await api.charger.getOptimalChargeRange({ params: { id: 1, startTime: `${selectedDate}T${selectedHour ?? '00'}:00:00Z` } }); // This is probably not correct, Check this once backend is implemented fully
+    setOptimalChargeRange(res.data.chargeRange);
+  }
+
+  const root = document.querySelector(":root");
+  const red = new Color(224 / 255, 60 / 255, 50 / 255);
+  const yellow = new Color(255 / 255, 255 / 255, 1 / 255);
+  const green = new Color(123 / 255, 182 / 255, 98 / 255);
+
+
+  const setSliderColor = () => {
+    const gradient = new Gradient([yellow, green, green, red], [0, optimalChargeRange.low, optimalChargeRange.high, 100]);
+    let color = `#${gradient.evaluate(chargeAmount)}`;
+    root.style.setProperty('--sliderColor', color);
+  }
+
+  useEffect(() => {
+    loadNewRange();
+    setSliderColor();
+  }, [selectedDate, selectedHour]);
+
+  useEffect(() => {
+    setSliderColor();
+  }, [chargeAmount]);
+
+
   const handleSliderInput = (event) => {
     setChargeAmount(event.target.value);
   }
@@ -153,7 +244,17 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
                   Reservation Time: {formatHour(selectedHour)}
                 </button>
 
-                <input type="range" min={0} max={100} value={chargeAmount} className="range range-lg mt-4" onChange={handleSliderInput}/>
+                <div className="range mt-4">
+                  <input
+                    type="range"
+                    id="chargeSlider"
+                    min={0}
+                    max={100}
+                    value={chargeAmount}
+                    onChange={handleSliderInput}
+                  />
+                </div>
+
                 <div className="w-full flex flex-row mt-2">
                   <span className="text-xs flex-auto">Slowest Rate</span>
                   <span className="text-xs flex-auto text-right">Fastest Rate</span>
@@ -183,5 +284,6 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
     </>
   )
 }
+
 
 export default ReserveModal
