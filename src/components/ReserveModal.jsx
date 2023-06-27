@@ -4,6 +4,10 @@ import api from "../api";
 
 
 const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage, setAlert }) => {
+
+  const lowChargeValue = 30;
+  const highChargeValue = 150;
+  const [currentKWReserve, setCurrentKWReserve] = useState(((highChargeValue - lowChargeValue) * 0.5) + lowChargeValue);
   const [dateSet, setDateSet] = useState();
   const [isVisible, setIsVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState({ startDate: new Date(), endDate: null });
@@ -190,9 +194,11 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
 
 
   const setSliderColor = () => {
-    const gradient = new Gradient([yellow, green, green, red], [0, optimalChargeRange?.low ?? 25, optimalChargeRange?.high ?? 75, 100]);
+    const gradient = new Gradient([yellow, green, green, red], [0, ((optimalChargeRange?.low ?? 50 - lowChargeValue) / (highChargeValue-lowChargeValue)) * 100, ((optimalChargeRange?.high ?? 100 - lowChargeValue) / (highChargeValue - lowChargeValue)) * 100, 100]);
     let color = `#${gradient.evaluate(chargeAmount)}`;
     root.style.setProperty('--sliderColor', color);
+
+    setCurrentKWReserve(((chargeAmount / 100) * (highChargeValue - lowChargeValue) + lowChargeValue).toFixed(1));
   }
 
   useEffect(() => {
@@ -242,7 +248,10 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
                   Reservation Time: {formatHour(selectedHour)}
                 </button>
 
-                <div className="range mt-4">
+                <div>
+                  <h2 className="text-center mt-4 font-semibold">{currentKWReserve}kW</h2>
+                </div>
+                <div className="range">
                   <input
                     type="range"
                     id="chargeSlider"
@@ -253,7 +262,7 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
                   />
                 </div>
 
-                <div className="w-full flex flex-row mt-2">
+                <div className="w-full flex flex-row">
                   <span className="text-xs flex-auto">Slowest Rate</span>
                   <span className="text-xs flex-auto text-right">Fastest Rate</span>
                 </div>
