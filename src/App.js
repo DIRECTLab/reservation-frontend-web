@@ -30,7 +30,7 @@ function App() {
   }
   return (
     <BrowserRouter>
-      <NavigationBar setMenuOpen={setMenuOpen}/>
+      <NavigationBar setMenuOpen={setMenuOpen} token={token}/>
       <Routes>
         <Route exact path='/' element={<Home token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen} encodedToken={tokenEncoded}/>} />
         <Route exact path='/reserve' element={<Reserve token={token} menuOpen={menuOpen} setMenuOpen={setMenuOpen} encodedToken={tokenEncoded} />} />

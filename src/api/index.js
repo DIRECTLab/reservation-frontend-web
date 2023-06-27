@@ -57,5 +57,6 @@ const api = {
     add: r('post', 'favorite'),
     remove: r('delete', 'favorite'),
   },
+  // createCheckoutSession: r('post', 'token/create-checkout-session'),
 }
 export default api

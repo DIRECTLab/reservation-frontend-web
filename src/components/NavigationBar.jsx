@@ -1,29 +1,46 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Link
 } from "react-router-dom";
-const NavigationBar = ({setMenuOpen}) => {
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCoins } from '@fortawesome/free-solid-svg-icons'
+import api from "../api";
+
+
+const NavigationBar = ({ setMenuOpen, token }) => {
+  const [numberOfChargerTokens, setNumberOfChargerTokens] = useState('...');
+  const [loading, setLoading] = useState(false);
   //Comes from this: https://reacthustle.com/blog/how-to-close-daisyui-dropdown-with-one-click
   const handleClick = () => {
     setMenuOpen(false)
     const elem = document.activeElement;
-    if(elem){
+    if (elem) {
       elem?.blur();
     }
   };
 
+  const loadNumberOfTokens = async () => {
+    const res = await api.user(token.id).getUser();
+    setNumberOfChargerTokens(res.data.numberOfChargerTokens);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    loadNumberOfTokens();
+  }, [])
+
   return (
     <>
       <div className="navbar bg-base-100 w-full border-primary drop-shadow-md">
-        <div className="md:hidden">
+        <div className="md:hidden w-full">
           <div className="navbar-start">
             <div className="dropdown">
-              <label 
+              <label
                 tabIndex={0}
                 className="btn btn-ghost btn-circle"
-                onClick={() => {setMenuOpen(true)}}
+                onClick={() => { setMenuOpen(true) }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-5 h-5 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-6 h-6 stroke-current"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
               </label>
               <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
                 <li onClick={handleClick}><Link to="/" className="btn btn-ghost normal-case text-xl w-full my-2">Home</Link></li>
@@ -32,16 +49,32 @@ const NavigationBar = ({setMenuOpen}) => {
               </ul>
             </div>
           </div>
+          <div className="navbar-end justify-end items-end text-end">
+            <span className="text-xl px-4">
+              <FontAwesomeIcon icon={faCoins} />
+              {loading ? <span className="pl-1">...</span> :
+                <span className="pl-1">{numberOfChargerTokens}</span>
+              }
+            </span>
+          </div>
         </div>
-        <nav className="w-full invisible md:visible">
+
+        <nav className="w-full hidden md:flex md:flex-row">
           <div className="flex-1">
             <Link to="/" className="btn btn-ghost normal-case text-xl">Home</Link>
           </div>
           <div className="flex-none">
             <ul className="menu menu-horizontal p-0">
-                <li><Link to="/reserve">Reserve</Link></li>
-                <li><Link to="/settings">Settings</Link></li>
+              <li><Link to="/reserve">Reserve</Link></li>
+              <li><Link to="/settings">Settings</Link></li>
             </ul>
+            <span className="text-xl px-4">
+              <FontAwesomeIcon icon={faCoins} />
+              {loading ? <span className="pl-1">...</span> :
+                <span className="pl-1">{numberOfChargerTokens}</span>
+              }
+              
+            </span>
           </div>
         </nav>
       </div>

@@ -44,7 +44,7 @@ const CurrentReservation = ({userId, menuOpen, setError, setAlert, setAlertMessa
 
   if (!currentReservation) {
     return (
-      <div className={`card w-4/5 md:w-3/5 bg-base-100 shadow-xl flex justify-center items-center ${menuOpen ? '-z-10' : ''}`}>
+      <div className={`card w-4/5 md:w-2/5 bg-base-100 shadow-xl flex justify-center items-center ${menuOpen ? '-z-10' : ''}`}>
         <div className="card-body">
           <h2 className="card-title justify-center text-center">No Current Reservation</h2>
           <div className="card-actions justify-center mt-8">
@@ -61,7 +61,7 @@ const CurrentReservation = ({userId, menuOpen, setError, setAlert, setAlertMessa
   }
   else {
     return (
-      <div className="card w-4/5 md:w-3/5 bg-base-100 shadow-xl flex justify-center items-center -z-10">
+      <div className="card w-4/5 md:w-2/5 bg-base-100 shadow-xl flex justify-center items-center -z-10">
         <div className="card-body">
           <h2 className="card-title justify-center">{currentReservation.Charger.name}</h2>
           {/* <h2 className="text-lg self-center">Car Model: Tesla</h2> */}

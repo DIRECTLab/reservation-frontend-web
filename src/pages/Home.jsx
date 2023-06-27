@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CurrentReservation from "../components/CurrentReservation";
 import UpcomingReservations from "../components/UpcomingReservations";
 import Alert from "../components/Alert";
+import ChargeTokensDisplay from "../components/ChargeTokensDisplay";
 
 const Home = ({token, menuOpen, setMenuOpen, encodedToken}) => {
   const [alert, setAlert] = useState(false)
