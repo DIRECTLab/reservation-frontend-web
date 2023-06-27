@@ -194,7 +194,7 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
 
 
   const setSliderColor = () => {
-    const gradient = new Gradient([yellow, green, green, red], [0, ((optimalChargeRange?.low ?? 50 - lowChargeValue) / (highChargeValue-lowChargeValue)) * 100, ((optimalChargeRange?.high ?? 100 - lowChargeValue) / (highChargeValue - lowChargeValue)) * 100, 100]);
+    const gradient = new Gradient([yellow, green, red], [0, (((optimalChargeRange?.low ?? 50 - lowChargeValue) / (highChargeValue-lowChargeValue)) + ((optimalChargeRange?.high ?? 100 - lowChargeValue) / (highChargeValue - lowChargeValue))) * 50, 100]);
     let color = `#${gradient.evaluate(chargeAmount)}`;
     root.style.setProperty('--sliderColor', color);
 
