@@ -16,6 +16,9 @@ function App() {
 
   const [menuOpen, setMenuOpen] = useState(false)
   const { token, setToken, tokenEncoded } = useToken();
+
+
+  
   if (!token && window.location.pathname === "/register") {
     return <Register setToken={setToken} />
   }
@@ -25,8 +28,6 @@ function App() {
     }
     return <Login setToken={setToken} />
   }
-
-
   return (
     <BrowserRouter>
       <NavigationBar setMenuOpen={setMenuOpen}/>

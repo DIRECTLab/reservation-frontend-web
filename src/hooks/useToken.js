@@ -41,7 +41,8 @@ const useToken = () => {
 
   const saveToken = userToken => {
     localStorage.setItem('token', JSON.stringify(userToken))
-    setToken(userToken)
+    setTokenEncoded(userToken);
+    setToken(getToken())
   }
   
   return {
