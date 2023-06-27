@@ -16,11 +16,22 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
   const [selectableHours, setSelectableHours] = useState([]);
   const [chargeAmount, setChargeAmount] = useState(50);
   const [optimalChargeRange, setOptimalChargeRange] = useState({});
+  const [numberOfChargerTokens, setNumberOfChargerTokens] = useState(0);
 
 
   useEffect(() => {
     setDateSet(false);
-  }, [])
+  }, []);
+
+
+  const loadNumberOfTokens = async () => {
+    const res = await api.user(token.id).getUser();
+    setNumberOfChargerTokens(res.data.numberOfChargerTokens);
+  }
+
+  useEffect(() => {
+    loadNumberOfTokens();
+  }, []);
 
   function rgb2hex(r, g, b) {
     if (r > 255 || g > 255 || b > 255) {
@@ -194,7 +205,7 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
 
 
   const setSliderColor = () => {
-    const gradient = new Gradient([yellow, green, red], [0, (((optimalChargeRange?.low ?? 50 - lowChargeValue) / (highChargeValue-lowChargeValue)) + ((optimalChargeRange?.high ?? 100 - lowChargeValue) / (highChargeValue - lowChargeValue))) * 50, 100]);
+    const gradient = new Gradient([yellow, green, red], [0, (((optimalChargeRange?.low ?? 50 - lowChargeValue) / (highChargeValue - lowChargeValue)) + ((optimalChargeRange?.high ?? 100 - lowChargeValue) / (highChargeValue - lowChargeValue))) * 50, 100]);
     let color = `#${gradient.evaluate(chargeAmount)}`;
     root.style.setProperty('--sliderColor', color);
 
@@ -267,6 +278,10 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
                   <span className="text-xs flex-auto text-right">Fastest Rate</span>
                 </div>
 
+                <div className="w-full mt-4 text-center">
+                  <h1 className="text-lg font-bold">Costs: <span className="text-error">10</span></h1>
+                  <h1 className="text-lg font-bold">Available: <span className="text-primary">{numberOfChargerTokens}</span></h1>
+                </div>
 
                 <div className={`modal-action w-full ${(selectableHours !== null && selectedDate !== null) ? '' : 'invisible'}`}>
                   <label htmlFor="my-modal-6" className="btn w-full" onClick={() => { reserveTime() }}>Reserve</label>
