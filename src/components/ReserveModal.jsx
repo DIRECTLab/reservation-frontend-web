@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Datepicker from "react-tailwindcss-datepicker";
 import api from "../api";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCoins } from '@fortawesome/free-solid-svg-icons'
 
 const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage, setAlert }) => {
 
@@ -14,15 +15,14 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
   const [selectedHour, setSelectedHour] = useState(new Date().getHours() + 1);
   const [currentHour, setCurrentHour] = useState(new Date().getHours());
   const [selectableHours, setSelectableHours] = useState([]);
-  const [chargeAmount, setChargeAmount] = useState(50);
   const [optimalChargeRange, setOptimalChargeRange] = useState({});
   const [numberOfChargerTokens, setNumberOfChargerTokens] = useState(0);
+  const [costOfReservation, setCostOfReservation] = useState(1);
 
 
   useEffect(() => {
     setDateSet(false);
   }, []);
-
 
   const loadNumberOfTokens = async () => {
     const res = await api.user(token.id).getUser();
@@ -33,13 +33,15 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
     loadNumberOfTokens();
   }, []);
 
-  function rgb2hex(r, g, b) {
-    if (r > 255 || g > 255 || b > 255) {
-      throw "Invalid color component";
-    }
-    return ((r << 16) | (g << 8) | b).toString(16);
+  function componentToHex(c) {
+    let hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
   }
-
+  
+  function rgbToHex(r, g, b) {
+    return "#" + componentToHex(Math.floor(r)) + componentToHex(Math.floor(g)) + componentToHex(Math.floor(b));
+  }
+  
   class Color {
     constructor(r, g, b) {
       this.r = r;
@@ -52,7 +54,7 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
     }
 
     toHex() {
-      return rgb2hex(this.r * 255, this.g * 255, this.b * 255);
+      return rgbToHex(this.r * 255.999, this.g * 255.999, this.b * 255.999);
     }
   }
 
@@ -60,8 +62,6 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
     // blends colors with linear interpolation, step should be 0-1
     return new Color(color1.r * (1 - step) + color2.r * step, color1.g * (1 - step) + color2.g * step, color1.b * (1 - step) + color2.b * step);
   }
-
-
 
   class Gradient {
     constructor(colors, steps) {
@@ -107,8 +107,6 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
       return `${time} AM`
     }
   }
-
-
 
   const reserveTime = async () => {
 
@@ -200,13 +198,13 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
 
   const root = document.querySelector(":root");
   const red = new Color(224 / 255, 60 / 255, 50 / 255);
-  const yellow = new Color(255 / 255, 255 / 255, 1 / 255);
+  const blue = new Color(19 / 255, 232 / 255, 161 / 255);
   const green = new Color(123 / 255, 182 / 255, 98 / 255);
 
 
-  const setSliderColor = () => {
-    const gradient = new Gradient([yellow, green, red], [0, (((optimalChargeRange?.low ?? 50 - lowChargeValue) / (highChargeValue - lowChargeValue)) + ((optimalChargeRange?.high ?? 100 - lowChargeValue) / (highChargeValue - lowChargeValue))) * 50, 100]);
-    let color = `#${gradient.evaluate(chargeAmount)}`;
+  const setSliderColor = (chargeAmount) => {
+    const gradient = new Gradient([blue, green, red], [0, (((optimalChargeRange?.low ?? 50 - lowChargeValue) / (highChargeValue - lowChargeValue)) + ((optimalChargeRange?.high ?? 100 - lowChargeValue) / (highChargeValue - lowChargeValue))) * 50, 100]);
+    let color = `${gradient.evaluate(chargeAmount)}`;
     root.style.setProperty('--sliderColor', color);
 
     setCurrentKWReserve(((chargeAmount / 100) * (highChargeValue - lowChargeValue) + lowChargeValue).toFixed(1));
@@ -214,16 +212,20 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
 
   useEffect(() => {
     loadNewRange();
-    setSliderColor();
+    setSliderColor(50);
   }, [selectedDate, selectedHour]);
-
-  useEffect(() => {
-    setSliderColor();
-  }, [chargeAmount]);
 
 
   const handleSliderInput = (event) => {
-    setChargeAmount(event.target.value);
+    setSliderColor(Number.parseFloat(event.target.value));
+    if (event.type === "mouseup") {
+      console.log("Mouse up")
+    }
+  }
+
+  const getTokenCost = async (event) => {
+    const res = await api.charger.getCost({ params: { id: 1, startTime: `${selectedDate}T${selectedHour ?? '00'}:00:00Z`, chargeAmount: event.target.value } });
+    setCostOfReservation(res.data.cost);
   }
 
 
@@ -268,8 +270,8 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
                     id="chargeSlider"
                     min={0}
                     max={100}
-                    value={chargeAmount}
                     onChange={handleSliderInput}
+                    onClick={getTokenCost}
                   />
                 </div>
 
@@ -279,8 +281,9 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
                 </div>
 
                 <div className="w-full mt-4 text-center">
-                  <h1 className="text-lg font-bold">Costs: <span className="text-error">10</span></h1>
-                  <h1 className="text-lg font-bold">Available: <span className="text-primary">{numberOfChargerTokens}</span></h1>
+              
+                  <h1 className="text-lg font-bold">Costs: <span className="text-error pl-1"><FontAwesomeIcon icon={faCoins} /><span className="pl-1">{costOfReservation}</span></span></h1>
+                  <h1 className="text-lg font-bold">Available: <span className="text-primary pl-1"><FontAwesomeIcon icon={faCoins} /><span className="pl-1">{numberOfChargerTokens}</span></span></h1>
                 </div>
 
                 <div className={`modal-action w-full ${(selectableHours !== null && selectedDate !== null) ? '' : 'invisible'}`}>

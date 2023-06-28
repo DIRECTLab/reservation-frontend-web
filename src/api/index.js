@@ -35,7 +35,8 @@ const r = requestGenerator(getApiBase);
 const api = {
   getChargers: r('get', 'charger'),
   charger: {
-    getOptimalChargeRange: r('get', 'charger/optimal-range')
+    getOptimalChargeRange: r('get', 'charger/optimal-range'),
+    getCost: r('get', 'charger/cost'),
   },
   reservation: (userId) => ({
     getAll: r('get', `reservation?UserId=${userId}&all=true`),
