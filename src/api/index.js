@@ -16,6 +16,9 @@ const requestGenerator = (getBase) => (method, uri) => (data = {}, authorization
     case methods.post:
       requestPromise = axios[method](`${getBase()}/${uri}`, {...data}, {headers: {authorization: authorization}});
       break;
+    case methods.patch:
+      requestPromise = axios[method](`${getBase()}/${uri}`, {...data}, {headers: {authorization: authorization}});
+      break;
     case methods.delete:
       requestPromise = axios[method](`${getBase()}/${uri}`, {headers: {authorization}});
       break;
@@ -52,6 +55,7 @@ const api = {
   login: r('post', `user/login`),
   user: (userId) => ({
     getUser: r('get', `user?id=${userId}`),
+    spendTokens: r('patch', `user/spend-tokens`),
   }),
   favorites: {
     get: r('get', 'favorite'),

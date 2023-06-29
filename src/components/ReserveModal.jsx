@@ -128,9 +128,21 @@ const ReserveModal = ({ token, encodedToken, charger, setError, setAlertMessage,
     }
     else {
       setError(false)
-      setAlertMessage("Reservation Made")
-      setAlert(true)
-      getReservationsOnCharger(charger.id, selectedDate.startDate);
+      const minusTokensRes = await api.user(token.id).spendTokens({
+        'id': token.id,
+        'cost': costOfReservation,
+      }, encodedToken);
+      console.log(minusTokensRes)
+      if (minusTokensRes.error) {
+        setError(true);
+        setAlertMessage(res.error);
+        setAlert(true);
+        return
+      } else {
+        setAlertMessage("Reservation Made")
+        setAlert(true)
+        getReservationsOnCharger(charger.id, selectedDate.startDate);
+      }
     }
   }
 
